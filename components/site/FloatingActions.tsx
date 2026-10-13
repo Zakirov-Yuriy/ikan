@@ -1,0 +1,74 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { PhoneIcon } from "@/components/ui/icons";
+import { RequestLink } from "./RequestPopup";
+
+type Props = {
+  phoneHref: string;
+  callbackHref: string;
+  /*
+   * В макетах кнопки нарисованы по-разному:
+   * home: главная, 50 px от правого края, зелёный #11BB17;
+   * list: список квартир для аренды, 24 px от края, зелёный #29BA44.
+   */
+  variant?: "home" | "list";
+};
+
+const looks = {
+  home: {
+    box: "right-[calc(50px+var(--scrollbar-gap,0px))]",
+    call: "bg-call",
+    shadow: "shadow-[0_10px_24px_-8px_rgba(8,34,52,0.35)]",
+  },
+  list: {
+    box: "right-[calc(24px+var(--scrollbar-gap,0px))]",
+    call: "bg-[#29ba44]",
+    shadow: "shadow-[0_6px_20px_rgba(8,34,52,0.27)]",
+  },
+};
+
+/*
+ * Две кнопки, закреплённые в правом нижнем углу окна на компьютере.
+ * Когда на экране появляется подвал с формой, кнопки прячутся,
+ * чтобы не перекрывать саму форму.
+ * Пока открыто окно заявки, полоса прокрутки пропадает, и кнопки отодвигаются
+ * на её ширину (--scrollbar-gap), чтобы остаться на месте.
+ */
+export function FloatingActions({ phoneHref, callbackHref, variant = "home" }: Props) {
+  const look = looks[variant];
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    const footer = document.querySelector("footer");
+    if (!footer) return;
+    const observer = new IntersectionObserver(([entry]) => setHidden(entry.isIntersecting));
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      className={`fixed bottom-6 z-30 hidden flex-col gap-2 transition-opacity duration-200 lg:flex ${look.box} ${
+        hidden ? "pointer-events-none opacity-0" : "opacity-100"
+      }`}
+    >
+      <a
+        href={phoneHref}
+        tabIndex={hidden ? -1 : undefined}
+        className={`flex h-[46px] w-[150px] items-center justify-center gap-[9px] rounded-[10px] text-[13.5px] font-medium text-white transition-[filter] hover:brightness-110 ${look.call} ${look.shadow}`}
+      >
+        <PhoneIcon className="size-4" />
+        Позвонить
+      </a>
+      {/* Открывает окно заявки */}
+      <RequestLink
+        href={callbackHref}
+        tabIndex={hidden ? -1 : undefined}
+        className={`flex h-[46px] w-[150px] items-center justify-center rounded-[10px] bg-sky text-[13.5px] font-medium text-navy transition-colors hover:bg-white ${look.shadow}`}
+      >
+        Оставить заявку
+      </RequestLink>
+    </div>
+  );
+}
