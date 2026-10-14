@@ -30,6 +30,7 @@ export const cardColumns = ["Тип", "Площадь", "Стоимость"];
 export const apartmentCards: ApartmentCardData[] = [
   {
     name: "Апартамент A4",
+    complex: "l1",
     location: "Златибор · Приземье",
     status,
     text: `Студия, 28 м². ${byPresentation}`,
@@ -51,6 +52,7 @@ export const apartmentCards: ApartmentCardData[] = [
   },
   {
     name: "Апартамент A6",
+    complex: "l1",
     location: "Златибор · 1-й этаж",
     status,
     text: `Однокомнатный, 37 м². ${byPresentation}`,
@@ -73,6 +75,7 @@ export const apartmentCards: ApartmentCardData[] = [
   },
   {
     name: "Апартамент A10",
+    complex: "l2",
     location: "Златибор · 2-й этаж",
     status,
     text: `Однокомнатный, 37 м². ${byPresentation}`,

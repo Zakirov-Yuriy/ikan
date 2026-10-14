@@ -10,7 +10,7 @@ type Props = {
   intro: { crumbs: Crumb[]; title: string; lead: string };
   /* Вид верха страницы: заголовок в две строки, в одну или на тёмном фоне */
   introVariant: "catalog" | "catalogShort" | "dark";
-  /* Сам список: метки с карточками (LevelList) или вкладки (StatusTabs) */
+  /* Сам список: по жилым комплексам (ComplexList) или по стадии (StatusTabs) */
   list: ReactNode;
   /* Две закреплённые кнопки справа внизу на компьютере. С 14.10 они на всех страницах */
   floating?: boolean;

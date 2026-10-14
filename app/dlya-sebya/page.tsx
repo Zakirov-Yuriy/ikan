@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
-import { LevelList } from "@/components/catalog/LevelList";
+import { ComplexList } from "@/components/catalog/ComplexList";
+import { complexes } from "@/content/complexes";
 import { Consultation } from "@/components/home/Consultation";
 import { living } from "@/content/living";
 
@@ -14,8 +15,8 @@ export default function LivingPage() {
       introVariant="catalog"
       floating
       list={
-        <LevelList
-          levels={living.levels}
+        <ComplexList
+          complexes={complexes}
           columns={living.columns}
           cards={living.cards}
         />

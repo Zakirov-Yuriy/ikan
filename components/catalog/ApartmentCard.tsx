@@ -4,6 +4,8 @@ import { ArrowIcon, PinIcon } from "@/components/ui/icons";
 
 export type ApartmentCardData = {
   name: string;
+  /* Ключ жилого комплекса из content/complexes.ts */
+  complex: string;
   location: string;
   /*
    * Метка статуса. В макетах она разная: на компьютере жёлтая, на телефоне

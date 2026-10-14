@@ -25,11 +25,7 @@ export const renting = {
     title: "Квартиры для сдачи в аренду",
     lead: "Покупка ликвидного жилья в Сербии со стабильным арендным доходом.",
   },
-  /* Метки над списком: в макете этой страницы выбрана вторая */
-  levels: [
-    { label: "L1", active: false },
-    { label: "L2", active: true },
-  ],
+  /* Вкладки по жилым комплексам строятся из content/complexes.ts */
   columns: cardColumns,
   cards: apartmentCards,
   /*

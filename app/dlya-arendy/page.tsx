@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
-import { LevelList } from "@/components/catalog/LevelList";
+import { ComplexList } from "@/components/catalog/ComplexList";
+import { complexes } from "@/content/complexes";
 import { Consultation } from "@/components/home/Consultation";
 import { renting } from "@/content/renting";
 
@@ -13,9 +14,8 @@ export default function RentingPage() {
       intro={renting.intro}
       introVariant="catalogShort"
       list={
-        <LevelList
-          levels={renting.levels}
-          dimLevels
+        <ComplexList
+          complexes={complexes}
           columns={renting.columns}
           cards={renting.cards}
           className="pt-[27.5px] lg:pt-[40.4px]"
