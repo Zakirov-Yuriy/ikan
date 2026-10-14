@@ -5,13 +5,22 @@ import { scenarios } from "@/content/home";
 
 /* Пять направлений: текст слева, фотография справа. На телефоне фотография сверху. */
 export function Scenarios() {
+  /*
+   * overflow-x-clip: при наведении строка чуть увеличивается и выходит за края
+   * окна; без обрезки появилась бы горизонтальная прокрутка. Тень сверху и
+   * снизу остаётся видна, clip не трогает вертикаль.
+   *
+   * На компьютере строка под курсором «выдвигается вперёд»: чуть
+   * увеличивается, приподнимается и получает тень. При уходе курсора
+   * возвращается. Сдвиг фотографии при наведении на ссылку остался.
+   */
   return (
-    <section aria-label="Что мы предлагаем" className="border-t border-line bg-white">
+    <section aria-label="Что мы предлагаем" className="overflow-x-clip border-t border-line bg-white">
       <ol>
         {scenarios.map((item, index) => (
           <li
             key={item.title}
-            className="group/row border-b border-line md:grid md:min-h-[229px] md:grid-cols-[minmax(0,1fr)_300px]"
+            className="group/row relative border-b border-line bg-white transition-[translate,scale,box-shadow] duration-300 ease-out motion-reduce:transition-none md:grid md:min-h-[229px] md:grid-cols-[minmax(0,1fr)_300px] lg:hover:z-10 lg:hover:-translate-y-[6px] lg:hover:scale-[1.012] lg:hover:shadow-[0_18px_40px_rgba(8,34,52,0.14)]"
           >
             {/*
               Фотография. На компьютере она в покое на 42 px шире своей колонки и

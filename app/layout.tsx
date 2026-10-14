@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { CookieConsent } from "@/components/site/CookieConsent";
+import { MobileBar } from "@/components/site/MobileBar";
 import { RequestPopupProvider } from "@/components/site/RequestPopup";
 import { cookieConsent, requestForm } from "@/content/site";
 import { fontVariables } from "./fonts";
@@ -49,6 +50,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <RequestPopupProvider form={requestForm}>
           {children}
         </RequestPopupProvider>
+        {/* Полоса «Позвонить», «Оставить заявку», Telegram внизу экрана на телефоне */}
+        <MobileBar />
         {/* Плашка «Мы используем cookie», пока человек не сделал выбор */}
         <CookieConsent texts={cookieConsent} />
       </body>

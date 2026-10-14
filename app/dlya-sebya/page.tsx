@@ -12,6 +12,7 @@ export default function LivingPage() {
     <CatalogPage
       intro={living.intro}
       introVariant="catalog"
+      floating
       list={
         <LevelList
           levels={living.levels}

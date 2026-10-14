@@ -3,6 +3,7 @@ import { Consultation } from "@/components/home/Consultation";
 import { InvestHero } from "@/components/invest/InvestHero";
 import { Process } from "@/components/invest/Process";
 import { Strategies } from "@/components/invest/Strategies";
+import { FloatingActions } from "@/components/site/FloatingActions";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { investments } from "@/content/investments";
@@ -38,6 +39,12 @@ export default function InvestmentsPage() {
         />
       </main>
       <Footer />
+      {/* Закреплённые кнопки справа на компьютере: с 14.10 на всех страницах */}
+      <FloatingActions
+        phoneHref={site.phone.href}
+        callbackHref={site.callbackHref}
+        variant="list"
+      />
     </>
   );
 }

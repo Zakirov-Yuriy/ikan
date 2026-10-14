@@ -15,7 +15,12 @@ export function Directions() {
             <li key={item.title}>
               <Link
                 href={item.href}
-                className="group relative flex h-[121px] items-center overflow-hidden rounded-[20px] bg-navy text-white lg:h-[324px] lg:items-end"
+                /*
+                  На компьютере карточка под курсором «выдвигается вперёд»:
+                  увеличивается, приподнимается и получает тень. Увеличение
+                  фотографии и белый кружок при наведении остались.
+                */
+                className="group relative flex h-[121px] items-center overflow-hidden rounded-[20px] bg-navy text-white transition-[translate,scale,box-shadow] duration-300 ease-out motion-reduce:transition-none lg:h-[324px] lg:items-end lg:hover:z-10 lg:hover:-translate-y-[6px] lg:hover:scale-[1.03] lg:hover:shadow-[0_18px_40px_rgba(8,34,52,0.28)]"
               >
                 <Image
                   src={item.image}

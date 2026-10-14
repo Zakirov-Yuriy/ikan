@@ -4,6 +4,7 @@ import { Gallery } from "@/components/object/Gallery";
 import { InfoTable } from "@/components/object/InfoTable";
 import { SummaryCard } from "@/components/object/SummaryCard";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
+import { FloatingActions } from "@/components/site/FloatingActions";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import type { Apartment } from "@/content/apartments";
@@ -58,6 +59,12 @@ export function ApartmentPage({ apartment }: Props) {
         />
       </main>
       <Footer />
+      {/* Закреплённые кнопки справа на компьютере: с 14.10 на всех страницах */}
+      <FloatingActions
+        phoneHref={site.phone.href}
+        callbackHref={site.callbackHref}
+        variant="list"
+      />
     </>
   );
 }

@@ -67,6 +67,16 @@ export function ArrowIcon(props: IconProps) {
   );
 }
 
+/* Самолётик Telegram из присланного файла Send-Up-Right.svg, 14.10 */
+export function TelegramIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" strokeWidth="1.5" {...base} {...props}>
+      <path d="M10.3076 13.6938L15.1538 8.84766" />
+      <path d="M3.2326 10.268C2.42568 9.86457 2.52346 8.68314 3.38572 8.41782L19.1948 3.55348C19.9621 3.31739 20.6808 4.03607 20.4447 4.80334L15.5804 20.6125C15.315 21.4747 14.1336 21.5725 13.7302 20.7656L10.38 14.0654C10.2833 13.8718 10.1264 13.7149 9.93282 13.6181L3.2326 10.268Z" />
+    </svg>
+  );
+}
+
 export function MenuIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 18 12" width="18" height="12" strokeWidth="1.5" {...base} {...props}>

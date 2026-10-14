@@ -5,6 +5,7 @@ import { Gallery } from "@/components/object/Gallery";
 import { InfoTable } from "@/components/object/InfoTable";
 import { PageIntro } from "@/components/object/PageIntro";
 import { SummaryCard } from "@/components/object/SummaryCard";
+import { FloatingActions } from "@/components/site/FloatingActions";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { restaurant } from "@/content/restaurant";
@@ -41,6 +42,12 @@ export default function RestaurantPage() {
         />
       </main>
       <Footer />
+      {/* Закреплённые кнопки справа на компьютере: с 14.10 на всех страницах */}
+      <FloatingActions
+        phoneHref={site.phone.href}
+        callbackHref={site.callbackHref}
+        variant="list"
+      />
     </>
   );
 }
