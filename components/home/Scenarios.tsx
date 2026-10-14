@@ -20,13 +20,14 @@ export function Scenarios() {
         {scenarios.map((item, index) => (
           <li
             key={item.title}
-            className="group/row relative border-b border-line bg-white transition-[translate,scale,box-shadow] duration-300 ease-out motion-reduce:transition-none md:grid md:min-h-[229px] md:grid-cols-[minmax(0,1fr)_300px] lg:hover:z-10 lg:hover:-translate-y-[6px] lg:hover:scale-[1.012] lg:hover:shadow-[0_18px_40px_rgba(8,34,52,0.14)]"
+            className="group/row scenario-row relative border-b border-line bg-white transition-[translate,scale,box-shadow] duration-300 ease-out motion-reduce:transition-none md:grid md:min-h-[229px] md:grid-cols-[minmax(0,1fr)_300px] lg:hover:z-10 lg:hover:-translate-y-[6px] lg:hover:scale-[1.012] lg:hover:shadow-[0_18px_40px_rgba(8,34,52,0.14)]"
           >
             {/*
               Фотография. На компьютере она в покое на 42 px шире своей колонки и
               выступает влево. При наведении на ссылку строки, при нажатии и при
               выборе с клавиатуры фотография уезжает на эти 42 px вправо, её правый
-              край обрезается краем окна, как в макете.
+              край обрезается правым краем кадра строки (.scenario-row в
+              globals.css): до ширины макета это край окна, как в макете.
             */}
             <div className="relative aspect-[402/228] md:order-2 md:aspect-auto">
               <div className="absolute inset-y-0 right-0 left-0 overflow-hidden lg:-left-[42px]">
