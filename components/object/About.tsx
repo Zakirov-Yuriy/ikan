@@ -1,4 +1,3 @@
-import { RequestLink } from "@/components/site/RequestPopup";
 import { ArrowIcon } from "@/components/ui/icons";
 
 type Props = {
@@ -149,14 +148,14 @@ export function About({ about, requestHref, variant = "restaurant" }: Props) {
             </div>
           ))}
         </dl>
-        {/* Открывает окно заявки. В макете ресторана для телефона это кнопка в рамке, в остальных ссылка со стрелкой */}
-        <RequestLink
+        {/* Прокручивает к форме «Заказать обратный звонок» в подвале. В макете ресторана для телефона это кнопка в рамке, в остальных ссылка со стрелкой */}
+        <a
           href={requestHref}
           className={`font-semibold text-navy transition-colors hover:text-accent lg:mt-[9px] lg:inline-flex lg:h-auto lg:justify-start lg:gap-[11.5px] lg:rounded-none lg:border-0 lg:text-[13px] lg:leading-[19.5px] ${look.link}`}
         >
           {data.link}
           <ArrowIcon className="size-4" />
-        </RequestLink>
+        </a>
       </aside>
     </section>
   );

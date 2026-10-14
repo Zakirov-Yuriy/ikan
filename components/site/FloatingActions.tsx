@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { PhoneIcon } from "@/components/ui/icons";
-import { RequestLink } from "./RequestPopup";
 
 type Props = {
   phoneHref: string;
@@ -49,7 +48,7 @@ export function FloatingActions({ phoneHref, callbackHref, variant = "home" }: P
 
   return (
     <div
-      className={`fixed bottom-6 z-30 hidden flex-col gap-2 transition-opacity duration-200 lg:flex ${look.box} ${
+      className={`fixed bottom-6 z-30 hidden flex-col gap-2 transition-[opacity,bottom] duration-200 lg:flex lg:bottom-[calc(24px+var(--cookie-banner,0px))] ${look.box} ${
         hidden ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
     >
@@ -61,14 +60,14 @@ export function FloatingActions({ phoneHref, callbackHref, variant = "home" }: P
         <PhoneIcon className="size-4" />
         Позвонить
       </a>
-      {/* Открывает окно заявки */}
-      <RequestLink
+      {/* Прокручивает страницу к форме «Заказать обратный звонок» в подвале */}
+      <a
         href={callbackHref}
         tabIndex={hidden ? -1 : undefined}
         className={`flex h-[46px] w-[150px] items-center justify-center rounded-[10px] bg-sky text-[13.5px] font-medium text-navy transition-colors hover:bg-white ${look.shadow}`}
       >
         Оставить заявку
-      </RequestLink>
+      </a>
     </div>
   );
 }

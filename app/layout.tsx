@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
+import { CookieConsent } from "@/components/site/CookieConsent";
 import { RequestPopupProvider } from "@/components/site/RequestPopup";
-import { requestForm } from "@/content/site";
+import { cookieConsent, requestForm } from "@/content/site";
 import { fontVariables } from "./fonts";
 import "./globals.css";
 
@@ -48,6 +49,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <RequestPopupProvider form={requestForm}>
           {children}
         </RequestPopupProvider>
+        {/* Плашка «Мы используем cookie», пока человек не сделал выбор */}
+        <CookieConsent texts={cookieConsent} />
       </body>
     </html>
   );

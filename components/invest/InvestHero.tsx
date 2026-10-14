@@ -1,4 +1,3 @@
-import { RequestLink } from "@/components/site/RequestPopup";
 import { ArrowIcon, PhoneIcon } from "@/components/ui/icons";
 import type { Investments } from "@/content/investments";
 import { RateCard } from "./RateCard";
@@ -32,14 +31,14 @@ export function InvestHero({ hero, rate, requestHref, phoneHref }: Props) {
             {hero.lead}
           </p>
           <div className="mt-[28.5px] flex flex-col gap-2 sm:flex-row lg:gap-3">
-            {/* Открывает окно заявки */}
-            <RequestLink
+            {/* Прокручивает страницу к форме «Заказать обратный звонок» в подвале */}
+            <a
               href={requestHref}
               className="flex h-[50px] items-center justify-center gap-[12px] rounded-[10px] bg-navy px-6 text-[13px] font-medium text-white transition-colors hover:bg-ink lg:h-12 lg:gap-[13px] lg:text-[16px]"
             >
               {hero.request}
               <ArrowIcon className="size-4" />
-            </RequestLink>
+            </a>
             <a
               href={phoneHref}
               className="flex h-[50px] items-center justify-center gap-[12px] rounded-[10px] border border-[#647480] px-[22px] text-[13px] font-medium text-navy transition-colors hover:border-navy hover:bg-navy hover:text-white lg:h-12 lg:gap-[11px] lg:border-navy lg:text-[16px]"

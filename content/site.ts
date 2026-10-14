@@ -58,6 +58,47 @@ export const requestForm = {
   privacyHref: SOON,
 };
 
+/*
+ * Плашка «Мы используем cookie» и окно её настроек.
+ * Сейчас на сайте нет ни счётчиков, ни рекламных скриптов, поэтому выбор
+ * только запоминается в браузере. Когда появится счётчик, его подключение
+ * должно смотреть на сохранённый выбор (lib/cookie-consent.ts).
+ */
+export const cookieConsent = {
+  title: "Мы используем cookie",
+  text: "Необходимые cookie обеспечивают работу сайта. Аналитические и маркетинговые cookie включаются только с вашего согласия.",
+  acceptAll: "Принять все",
+  settings: "Настроить",
+  /* Окно настроек. Макета не было, сделано в духе окна заявки */
+  dialog: {
+    eyebrow: "Конфиденциальность",
+    title: "Настройки cookie",
+    lead: "Выберите, какие cookie сайт может использовать. Выбор можно изменить в любой момент.",
+    categories: [
+      {
+        key: "necessary",
+        label: "Необходимые",
+        text: "Нужны для работы сайта и запоминают ваш выбор. Отключаются только в настройках браузера.",
+        required: true,
+      },
+      {
+        key: "analytics",
+        label: "Аналитические",
+        text: "Помогают понять, какие страницы и объекты интересны посетителям.",
+        required: false,
+      },
+      {
+        key: "marketing",
+        label: "Маркетинговые",
+        text: "Позволяют показывать наши предложения на других сайтах.",
+        required: false,
+      },
+    ],
+    save: "Сохранить выбор",
+    acceptAll: "Принять все",
+  },
+};
+
 export const footer = {
   about: [
     "Недвижимость и инвестиции",
@@ -76,12 +117,12 @@ export const footer = {
   },
   /*
    * Иконки соцсетей и мессенджеров, в том порядке, как в макете.
+   * Instagram и WhatsApp убраны 14.10 по просьбе Анны, их файлы остались
+   * в public/images/social на случай возврата.
    * Адресов пока нет: когда появятся, вписать их вместо SOON.
    */
   socials: [
     { label: "MAX", icon: "/images/social/max.svg", href: SOON },
-    { label: "Instagram", icon: "/images/social/instagram.svg", href: SOON },
-    { label: "WhatsApp", icon: "/images/social/whatsapp.svg", href: SOON },
     { label: "Telegram", icon: "/images/social/telegram.svg", href: SOON },
     { label: "ВКонтакте", icon: "/images/social/vk.svg", href: SOON },
   ],

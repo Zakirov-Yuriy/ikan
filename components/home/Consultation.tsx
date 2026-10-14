@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { RequestLink } from "@/components/site/RequestPopup";
 import { ArrowIcon } from "@/components/ui/icons";
 import { consultation } from "@/content/home";
 
@@ -158,14 +157,14 @@ export function Consultation({
               {consultation.text}
             </p>
           </div>
-          {/* Открывает окно заявки */}
-          <RequestLink
+          {/* Прокручивает страницу к форме «Заказать обратный звонок» в подвале */}
+          <a
             href={consultation.button.href}
             className={`relative flex h-12 shrink-0 items-center justify-center gap-[14px] rounded-[10px] bg-sky px-[26px] font-medium text-navy transition-colors hover:bg-white lg:mt-0 ${look.button} ${wide ? "lg:h-[50px] lg:w-[284px] lg:justify-between lg:pr-[23.5px] lg:pl-[33.5px]" : look.desktopButton}`}
           >
             {consultation.button.label}
             <ArrowIcon className="size-4" />
-          </RequestLink>
+          </a>
         </div>
       </div>
     </section>

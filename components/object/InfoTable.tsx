@@ -1,5 +1,3 @@
-import { RequestLink } from "@/components/site/RequestPopup";
-
 type Props = {
   title: string;
   columns: string[];
@@ -124,12 +122,13 @@ export function InfoTable({
           {mobileValue(3)}
         </div>
         {request && (
-          <RequestLink
+          // Прокручивает страницу к форме «Заказать обратный звонок» в подвале
+          <a
             href={requestHref}
             className="mt-[7.5px] flex h-11 items-center justify-center rounded-[10px] bg-navy pb-[2px] text-[12px] leading-[18px] font-medium text-white transition-colors hover:bg-ink"
           >
             {request}
-          </RequestLink>
+          </a>
         )}
       </div>
 

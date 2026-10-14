@@ -1,4 +1,3 @@
-import { RequestLink } from "@/components/site/RequestPopup";
 import { ArrowIcon } from "@/components/ui/icons";
 import type { Investments } from "@/content/investments";
 
@@ -37,14 +36,14 @@ export function Strategies({ strategies, requestHref }: Props) {
               <p className="mt-[11.5px] text-[13px] leading-[1.65] text-muted">
                 {item.text}
               </p>
-              {/* Открывает окно заявки */}
-              <RequestLink
+              {/* Прокручивает страницу к форме «Заказать обратный звонок» в подвале */}
+              <a
                 href={requestHref}
                 className="mt-[28.5px] flex w-fit items-center gap-[12px] text-[13px] leading-[19.5px] font-semibold text-navy transition-colors hover:text-accent lg:mt-[28px]"
               >
                 {strategies.link}
                 <ArrowIcon className="size-4" />
-              </RequestLink>
+              </a>
             </li>
           ))}
         </ol>

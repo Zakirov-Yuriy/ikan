@@ -1,4 +1,3 @@
-import { RequestLink } from "@/components/site/RequestPopup";
 import { ArrowIcon, PhoneIcon, PinIcon } from "@/components/ui/icons";
 
 type Props = {
@@ -123,14 +122,14 @@ export function SummaryCard({
         </p>
         <p className={`title-price text-ink ${look.price}`}>{summary.price}</p>
 
-        {/* Открывает окно заявки */}
-        <RequestLink
+        {/* Прокручивает страницу к форме «Заказать обратный звонок» в подвале */}
+        <a
           href={requestHref}
           className={`flex h-12 items-center justify-center gap-[13px] rounded-[10px] bg-navy text-[16px] leading-6 font-medium text-white transition-colors hover:bg-ink ${look.request}`}
         >
           {summary.request}
           <ArrowIcon className="mr-[1.5px] size-[16.5px]" strokeWidth={1.07} />
-        </RequestLink>
+        </a>
         <a
           href={phoneHref}
           className={`mt-2 h-12 items-center justify-center gap-[12.5px] rounded-[10px] border border-navy text-[16px] leading-6 font-medium text-navy transition-colors hover:bg-navy hover:text-white ${look.call}`}
