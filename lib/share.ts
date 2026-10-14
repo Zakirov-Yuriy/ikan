@@ -1,15 +1,17 @@
 /*
- * «Поделиться» страницей. Сначала системное окно «Поделиться» (на телефоне:
- * WhatsApp, Telegram и всё, что установлено), если браузер его даёт. Иначе
- * адрес страницы копируется в буфер обмена, и кнопка показывает «Ссылка
- * скопирована».
+ * «Поделиться» страницей.
  *
- * Окно «Поделиться» и буфер обмена браузеры дают только на защищённом
- * адресе (https или localhost). На сайте в домашней сети по http остаётся
- * запасной способ копирования через выделение текста.
+ * На телефоне: системное окно «Поделиться» (WhatsApp, Telegram и всё, что
+ * установлено), если браузер его даёт. Браузеры дают его только на
+ * защищённом адресе, https или localhost; на сайте в домашней сети по http
+ * его нет, и тогда открывается своё окно с вариантами (ShareSheet).
+ *
+ * На компьютере: адрес страницы копируется в буфер обмена, кнопка показывает
+ * «Ссылка скопирована».
  */
 
-export type ShareResult = "shared" | "copied" | "cancelled" | "failed";
+export type ShareResult =
+  "shared" | "copied" | "cancelled" | "failed" | "unavailable";
 
 /* Адрес текущей страницы без якоря: якорь вроде #callback делиться не должен */
 export function pageUrl(): string {
@@ -18,7 +20,7 @@ export function pageUrl(): string {
   );
 }
 
-async function copyText(text: string): Promise<boolean> {
+export async function copyText(text: string): Promise<boolean> {
   try {
     if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(text);
@@ -44,19 +46,51 @@ async function copyText(text: string): Promise<boolean> {
   }
 }
 
-/* mode: share сначала пробует системное окно, copy сразу копирует */
-export async function sharePage(mode: "share" | "copy"): Promise<ShareResult> {
-  const url = pageUrl();
-  if (mode === "share" && typeof navigator.share === "function") {
-    try {
-      await navigator.share({ title: document.title, url });
-      return "shared";
-    } catch (error) {
-      // Человек закрыл окно, не выбрав ничего: это не ошибка
-      if (error instanceof DOMException && error.name === "AbortError")
-        return "cancelled";
-      /* окно не открылось: копируем */
-    }
+/* Скопировать адрес страницы */
+export async function copyPageUrl(): Promise<ShareResult> {
+  return (await copyText(pageUrl())) ? "copied" : "failed";
+}
+
+/*
+ * Системное окно «Поделиться». unavailable: браузер его не даёт, нужно своё
+ * окно. cancelled: человек закрыл окно, ничего не выбрав.
+ */
+export async function shareNative(): Promise<ShareResult> {
+  if (typeof navigator.share !== "function") return "unavailable";
+  try {
+    await navigator.share({ title: document.title, url: pageUrl() });
+    return "shared";
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError")
+      return "cancelled";
+    return "unavailable";
   }
-  return (await copyText(url)) ? "copied" : "failed";
+}
+
+/* Ссылки «поделиться» для своего окна. Приложения на телефоне перехватывают их сами */
+export function shareLinks() {
+  const url = encodeURIComponent(pageUrl());
+  const title = encodeURIComponent(document.title);
+  return [
+    {
+      key: "telegram",
+      label: "Telegram",
+      href: `https://t.me/share/url?url=${url}&text=${title}`,
+    },
+    {
+      key: "whatsapp",
+      label: "WhatsApp",
+      href: `https://wa.me/?text=${title}%20${url}`,
+    },
+    {
+      key: "vk",
+      label: "ВКонтакте",
+      href: `https://vk.com/share.php?url=${url}&title=${title}`,
+    },
+    {
+      key: "mail",
+      label: "Почта",
+      href: `mailto:?subject=${title}&body=${url}`,
+    },
+  ];
 }

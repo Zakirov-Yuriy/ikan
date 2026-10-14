@@ -7,6 +7,7 @@ import type { ShareResult } from "@/lib/share";
 const texts: Record<ShareResult, string> = {
   shared: "",
   cancelled: "",
+  unavailable: "",
   copied: "Ссылка скопирована",
   failed: "Не удалось скопировать ссылку",
 };

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { PhoneIcon, TelegramIcon } from "@/components/ui/icons";
-import { sharePage } from "@/lib/share";
+import { copyPageUrl } from "@/lib/share";
 import { ShareNotice, useShareNotice } from "./ShareNotice";
 
 type Props = {
@@ -57,6 +57,20 @@ export function FloatingActions({ phoneHref, callbackHref, variant = "home" }: P
     >
       {/* «Ссылка скопирована» над кнопками */}
       <ShareNotice text={share.notice} className="absolute right-0 bottom-full mb-2 text-right" />
+      {/*
+        «Поделиться», с 14.10, первая сверху: копирует адрес страницы (без якоря) и показывает
+        «Ссылка скопирована». Вид по присланной кнопке: голубая, белый текст
+        Onest Medium 12, самолётик 14 px.
+      */}
+      <button
+        type="button"
+        tabIndex={hidden ? -1 : undefined}
+        onClick={async () => share.show(await copyPageUrl())}
+        className={`flex h-[46px] w-[150px] items-center justify-center gap-[10px] rounded-[10px] bg-sky text-[12px] font-medium text-white transition-colors hover:bg-sky-soft ${look.shadow}`}
+      >
+        <TelegramIcon className="size-[14px]" />
+        Поделиться
+      </button>
       <a
         href={phoneHref}
         tabIndex={hidden ? -1 : undefined}
@@ -73,20 +87,6 @@ export function FloatingActions({ phoneHref, callbackHref, variant = "home" }: P
       >
         Оставить заявку
       </a>
-      {/*
-        «Поделиться», с 14.10: копирует адрес страницы (без якоря) и показывает
-        «Ссылка скопирована». Вид по присланной кнопке: голубая, белый текст
-        Onest Medium 12, самолётик 14 px.
-      */}
-      <button
-        type="button"
-        tabIndex={hidden ? -1 : undefined}
-        onClick={async () => share.show(await sharePage("copy"))}
-        className={`flex h-[46px] w-[150px] items-center justify-center gap-[10px] rounded-[10px] bg-sky text-[12px] font-medium text-white transition-colors hover:bg-sky-soft ${look.shadow}`}
-      >
-        <TelegramIcon className="size-[14px]" />
-        Поделиться
-      </button>
     </div>
   );
 }
