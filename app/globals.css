@@ -376,6 +376,11 @@
     background: linear-gradient(90deg, rgba(4, 25, 38, 0.93) 0%, rgba(4, 25, 38, 0.55) 75%);
   }
 
+  /* Сообщение «Ссылка скопирована» над кнопкой «Поделиться»: проявляется и чуть приподнимается */
+  .share-notice {
+    animation: modal-in 200ms ease-out;
+  }
+
   /* На компьютере окно появляется по центру: проявляется и чуть приподнимается */
   .modal-panel[data-state="open"] {
     animation: modal-in 220ms cubic-bezier(0.22, 1, 0.36, 1);

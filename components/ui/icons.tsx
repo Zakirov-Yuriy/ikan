@@ -67,7 +67,7 @@ export function ArrowIcon(props: IconProps) {
   );
 }
 
-/* Самолётик Telegram из присланного файла Send-Up-Right.svg, 14.10 */
+/* Самолётик из присланного файла Send-Up-Right.svg, 14.10: кнопки «Поделиться» */
 export function TelegramIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" width="24" height="24" strokeWidth="1.5" {...base} {...props}>

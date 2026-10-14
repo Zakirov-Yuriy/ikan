@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PhoneIcon } from "@/components/ui/icons";
+import { PhoneIcon, TelegramIcon } from "@/components/ui/icons";
+import { sharePage } from "@/lib/share";
+import { ShareNotice, useShareNotice } from "./ShareNotice";
 
 type Props = {
   phoneHref: string;
@@ -37,6 +39,7 @@ const looks = {
 export function FloatingActions({ phoneHref, callbackHref, variant = "home" }: Props) {
   const look = looks[variant];
   const [hidden, setHidden] = useState(false);
+  const share = useShareNotice();
 
   useEffect(() => {
     const footer = document.querySelector("footer");
@@ -52,6 +55,8 @@ export function FloatingActions({ phoneHref, callbackHref, variant = "home" }: P
         hidden ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
     >
+      {/* «Ссылка скопирована» над кнопками */}
+      <ShareNotice text={share.notice} className="absolute right-0 bottom-full mb-2 text-right" />
       <a
         href={phoneHref}
         tabIndex={hidden ? -1 : undefined}
@@ -68,6 +73,20 @@ export function FloatingActions({ phoneHref, callbackHref, variant = "home" }: P
       >
         Оставить заявку
       </a>
+      {/*
+        «Поделиться», с 14.10: копирует адрес страницы (без якоря) и показывает
+        «Ссылка скопирована». Вид по присланной кнопке: голубая, белый текст
+        Onest Medium 12, самолётик 14 px.
+      */}
+      <button
+        type="button"
+        tabIndex={hidden ? -1 : undefined}
+        onClick={async () => share.show(await sharePage("copy"))}
+        className={`flex h-[46px] w-[150px] items-center justify-center gap-[10px] rounded-[10px] bg-sky text-[12px] font-medium text-white transition-colors hover:bg-sky-soft ${look.shadow}`}
+      >
+        <TelegramIcon className="size-[14px]" />
+        Поделиться
+      </button>
     </div>
   );
 }
