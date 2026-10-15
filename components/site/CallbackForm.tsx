@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { ArrowIcon } from "@/components/ui/icons";
+import { requestStatus, site } from "@/content/site";
+import { sendRequest } from "@/lib/request";
 
 type Props = {
   form: {
@@ -16,16 +18,28 @@ type Props = {
   };
 };
 
-export function CallbackForm({ form }: Props) {
-  const [notConnected, setNotConnected] = useState(false);
+type Status =
+  | { kind: "idle" }
+  | { kind: "sending" }
+  | { kind: "sent" }
+  | { kind: "failed"; message: string };
 
-  /*
-   * Отправка заявок пока не подключена: решается, куда они должны приходить.
-   * Форма проверяет поля и честно сообщает, что данные никуда не ушли.
-   */
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+export function CallbackForm({ form }: Props) {
+  const [status, setStatus] = useState<Status>({ kind: "idle" });
+
+  /* Заявка уходит на сервер сайта (lib/request.ts), дальше в бэкенд и админку */
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setNotConnected(true);
+    if (status.kind === "sending") return;
+    const element = event.currentTarget;
+    setStatus({ kind: "sending" });
+    const error = await sendRequest(element, "callback");
+    if (error) {
+      setStatus({ kind: "failed", message: error });
+      return;
+    }
+    element.reset();
+    setStatus({ kind: "sent" });
   }
 
   const field =
@@ -43,6 +57,15 @@ export function CallbackForm({ form }: Props) {
       </h2>
 
       <div className="mt-[10px] grid gap-[10px]">
+        {/* Поле-ловушка для роботов: людям не видно, роботы заполняют */}
+        <input
+          type="text"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          className="hidden"
+        />
         <input
           type="text"
           name="name"
@@ -92,15 +115,24 @@ export function CallbackForm({ form }: Props) {
 
       <button
         type="submit"
-        className="mt-[25px] flex h-12 w-full items-center justify-center gap-[14px] rounded-[10px] bg-sky text-[16px] font-medium text-navy transition-colors hover:bg-white"
+        disabled={status.kind === "sending"}
+        className="mt-[25px] flex h-12 w-full items-center justify-center gap-[14px] rounded-[10px] bg-sky text-[16px] font-medium text-navy transition-colors hover:bg-white disabled:opacity-70 disabled:hover:bg-sky"
       >
-        {form.submit}
+        {status.kind === "sending" ? requestStatus.sending : form.submit}
         <ArrowIcon className="size-4" />
       </button>
 
-      {notConnected && (
+      {status.kind === "sent" && (
         <p role="status" className="mt-3 text-[12px] leading-[18px] text-sky">
-          Отправка заявок ещё не подключена, данные никуда не ушли.
+          {requestStatus.sent}
+        </p>
+      )}
+      {status.kind === "failed" && (
+        <p role="alert" className="mt-3 text-[12px] leading-[18px] text-white/80">
+          {requestStatus.failed} {status.message} {requestStatus.retry}{" "}
+          <a href={site.phone.href} className="whitespace-nowrap text-sky">
+            {site.phone.label}
+          </a>
         </p>
       )}
     </form>

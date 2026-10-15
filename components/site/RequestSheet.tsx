@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useId, useState, type FormEvent } from "react";
 import { ArrowIcon } from "@/components/ui/icons";
+import { requestStatus, site } from "@/content/site";
+import { sendRequest } from "@/lib/request";
 import { Modal, useDesktop } from "./Modal";
 
 export type RequestFormTexts = {
@@ -17,6 +19,12 @@ export type RequestFormTexts = {
   termsHref: string;
   privacyHref: string;
 };
+
+type Status =
+  | { kind: "idle" }
+  | { kind: "sending" }
+  | { kind: "sent" }
+  | { kind: "failed"; message: string };
 
 type Props = {
   /* open: окно показано, closing: окно закрывается */
@@ -43,16 +51,16 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
   const nameId = useId();
   const phoneId = useId();
   const interestId = useId();
-  const [notConnected, setNotConnected] = useState(false);
+  const [status, setStatus] = useState<Status>({ kind: "idle" });
   const desktop = useDesktop();
 
-  /*
-   * Отправка заявок пока не подключена: решается, куда они должны приходить.
-   * Форма проверяет поля и честно сообщает, что данные никуда не ушли.
-   */
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  /* Заявка уходит на сервер сайта (lib/request.ts), дальше в бэкенд и админку */
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setNotConnected(true);
+    if (status.kind === "sending" || status.kind === "sent") return;
+    setStatus({ kind: "sending" });
+    const error = await sendRequest(event.currentTarget, "popup");
+    setStatus(error ? { kind: "failed", message: error } : { kind: "sent" });
   }
 
   /* Два набора размеров: слева окно на компьютере, справа на телефоне */
@@ -116,6 +124,15 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
         <label htmlFor={nameId} className={label}>
           {form.name.label}
         </label>
+        {/* Поле-ловушка для роботов: людям не видно, роботы заполняют */}
+        <input
+          type="text"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          className="hidden"
+        />
         <input
           id={nameId}
           type="text"
@@ -230,20 +247,34 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
           </div>
         )}
 
+        {/*
+          После отправки кнопка не выключается через disabled: иначе фокус
+          уходит из окна и Escape перестаёт его закрывать. Повторная отправка
+          отсекается в onSubmit, вид кнопки приглушён.
+        */}
         <button
           type="submit"
-          className={`flex h-12 w-full items-center justify-center gap-[13px] rounded-[10px] bg-navy text-[16px] leading-6 font-medium text-white ${look.submit}`}
+          aria-disabled={status.kind !== "idle" && status.kind !== "failed"}
+          className={`flex h-12 w-full items-center justify-center gap-[13px] rounded-[10px] bg-navy text-[16px] leading-6 font-medium text-white aria-disabled:opacity-70 ${look.submit}`}
         >
-          {form.submit}
+          {status.kind === "sending" ? requestStatus.sending : form.submit}
           <ArrowIcon className={look.arrow} strokeWidth={look.arrowStroke} />
         </button>
 
-        {notConnected && (
+        {status.kind === "sent" && (
           <p
             role="status"
-            className="mt-3 pb-1 text-[12px] leading-[18px] text-accent"
+            className="mt-3 pb-1 text-[13px] leading-[19px] text-accent"
           >
-            Отправка заявок ещё не подключена, данные никуда не ушли.
+            {requestStatus.sent}
+          </p>
+        )}
+        {status.kind === "failed" && (
+          <p role="alert" className="mt-3 pb-1 text-[12px] leading-[18px] text-muted">
+            {requestStatus.failed} {status.message} {requestStatus.retry}{" "}
+            <a href={site.phone.href} className="whitespace-nowrap text-accent">
+              {site.phone.label}
+            </a>
           </p>
         )}
       </form>
