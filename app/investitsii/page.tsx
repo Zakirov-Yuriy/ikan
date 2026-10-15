@@ -45,7 +45,8 @@ export default async function InvestmentsPage() {
           className="pb-[64px] lg:pb-[43px]"
         />
       </main>
-      <Footer />
+      {/* В макете страницы для телефона в подвале нет формы обратного звонка */}
+      <Footer formDesktopOnly />
       {/* Закреплённые кнопки справа на компьютере: с 14.10 на всех страницах */}
       <FloatingActions callbackHref={site.callbackHref} variant="list" />
     </>

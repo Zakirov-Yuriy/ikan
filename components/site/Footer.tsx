@@ -4,8 +4,13 @@ import { getSettings } from "@/lib/api";
 import { AnchorLink } from "./AnchorLink";
 import { CallbackForm } from "./CallbackForm";
 
-/* Подвал. Телефон из админки («Настройки»), один на весь сайт */
-export async function Footer() {
+/*
+ * Подвал. Телефон из админки («Настройки»), один на весь сайт.
+ * formDesktopOnly: форма «Заказать обратный звонок» только на компьютере.
+ * Так на странице инвестиций: в её макете для телефона формы в подвале нет
+ * (Анна, 15.10). Кнопки заявки там открывают окно заявки (RequestPopup).
+ */
+export async function Footer({ formDesktopOnly = false }: { formDesktopOnly?: boolean }) {
   const { phone } = await getSettings();
 
   return (
@@ -53,7 +58,7 @@ export async function Footer() {
             <FooterColumn column={footer.columns[2]} className="lg:mt-[57px]" />
           </div>
 
-          <div className="max-md:mt-[26px] md:col-span-3 lg:col-span-1">
+          <div className={`max-md:mt-[26px] md:col-span-3 lg:col-span-1 ${formDesktopOnly ? "max-lg:hidden" : ""}`}>
             <CallbackForm form={footer.form} />
           </div>
         </div>

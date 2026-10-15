@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -51,6 +52,31 @@ export function RequestPopupProvider({
   }, []);
 
   const popup = useMemo(() => ({ open }), [open]);
+
+  /*
+   * Кнопки, которые ведут к форме «Заказать обратный звонок» (#callback),
+   * открывают окно заявки, если формы на этой странице и этом экране не
+   * видно (подвал страницы инвестиций на телефоне). Если форма видна, они
+   * прокручивают к ней, как раньше.
+   */
+  useEffect(() => {
+    function onClick(event: MouseEvent) {
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+        return;
+      const link = (event.target as Element | null)?.closest?.("a[href]");
+      if (!(link instanceof HTMLAnchorElement)) return;
+      const url = new URL(link.href, window.location.href);
+      if (url.hash !== "#callback" || url.pathname !== window.location.pathname)
+        return;
+      const form = document.getElementById("callback");
+      if (form && form.getClientRects().length > 0) return;
+      event.preventDefault();
+      open(link);
+    }
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, [open]);
 
   return (
     <RequestPopupContext value={popup}>
