@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { CloseIcon, MenuIcon, PhoneIcon } from "@/components/ui/icons";
+import { AnchorLink } from "./AnchorLink";
 import { useRequestPopup } from "./RequestPopup";
 
 type Props = {
@@ -73,15 +73,16 @@ export function MobileMenu({ nav, phone }: Props) {
                 {nav.map((item) => (
                   <li key={item.label} className="border-b border-[#c1cacf] last:border-b-0">
                     {item.href ? (
-                      <Link
+                      // AnchorLink: «О компании» прокручивает к блоку на главной
+                      <AnchorLink
                         href={item.href}
                         onClick={close}
                         className="flex h-[77px] items-center text-[20px] leading-[30px] text-ink"
                       >
                         {item.label}
-                      </Link>
+                      </AnchorLink>
                     ) : (
-                      // Страницы пока нет: пункт виден, но не нажимается, меню остаётся открытым
+                      // Пункт без адреса виден, но не нажимается, меню остаётся открытым
                       <span className="flex h-[77px] items-center text-[20px] leading-[30px] text-ink">
                         {item.label}
                       </span>

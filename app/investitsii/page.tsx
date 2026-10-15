@@ -8,11 +8,18 @@ import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { investments } from "@/content/investments";
 import { site } from "@/content/site";
+import { getSettings } from "@/lib/api";
+
+/* Телефон из бэкенда при каждом запросе, без сборки заранее */
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = investments.meta;
 
 /* «Капитал работает. Вы живёте.»: страница инвестиций в строительство */
-export default function InvestmentsPage() {
+export default async function InvestmentsPage() {
+  /* Телефон для кнопки «Позвонить» из настроек админки */
+  const { phone } = await getSettings();
+
   return (
     <>
       <Header />
@@ -21,7 +28,7 @@ export default function InvestmentsPage() {
           hero={investments.hero}
           rate={investments.rate}
           requestHref={site.callbackHref}
-          phoneHref={site.phone.href}
+          phoneHref={phone.href}
         />
         <Strategies
           strategies={investments.strategies}
@@ -40,11 +47,7 @@ export default function InvestmentsPage() {
       </main>
       <Footer />
       {/* Закреплённые кнопки справа на компьютере: с 14.10 на всех страницах */}
-      <FloatingActions
-        phoneHref={site.phone.href}
-        callbackHref={site.callbackHref}
-        variant="list"
-      />
+      <FloatingActions callbackHref={site.callbackHref} variant="list" />
     </>
   );
 }

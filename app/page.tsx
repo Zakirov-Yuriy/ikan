@@ -35,7 +35,7 @@ export default async function HomePage() {
         <Consultation content={home.consultation} />
       </main>
       <Footer />
-      <FloatingActions phoneHref={site.phone.href} callbackHref={site.callbackHref} />
+      <FloatingActions callbackHref={site.callbackHref} />
     </>
   );
 }

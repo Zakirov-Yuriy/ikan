@@ -7,6 +7,7 @@
 type Photo = { src: string; alt: string };
 
 export type Apartment = {
+  slug: string;
   meta: { title: string; description: string };
   crumbs: { label: string; href: string }[];
   gallery: {
@@ -14,8 +15,11 @@ export type Apartment = {
     photos: Photo[];
     /* На телефоне в макете одна фотография */
     mobilePhoto: Photo;
+    /* «Все N фото»: ведёт на страницу со всеми фотографиями */
     all: { label: string; href: string };
   };
+  /* Все фотографии без повторов, для страницы «Все N фото» */
+  photos: Photo[];
   summary: {
     status: string;
     location: string;
@@ -51,15 +55,17 @@ export type Apartment = {
   consultation: { title: string; image: string };
 };
 
-/* Страницы и действия, которые ещё не сделаны */
-const SOON = "#";
-
 export const apartmentPage = {
   /* Средняя крошка пути: ведёт на список «для себя» */
   crumb: "Апартаменты",
-  /* «Все 12 фото»; страницы со всеми фотографиями пока нет, макета не было */
+  /* «Все 12 фото»: подпись кнопки и страница со всеми фотографиями (макета не было) */
   allPhotos: (count: number) => `Все ${count} фото`,
-  allPhotosHref: SOON,
+  photosPage: {
+    crumb: "Фото",
+    title: "Фотографии",
+    back: "Назад к апартаменту",
+    open: "Открыть в полном размере",
+  },
   priceLabel: "Стоимость",
   priceOnRequest: "По запросу",
   request: "Оставить заявку",

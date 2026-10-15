@@ -2,10 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { PhoneIcon } from "@/components/ui/icons";
 import { mainNav, site } from "@/content/site";
+import { getSettings } from "@/lib/api";
+import { AnchorLink } from "./AnchorLink";
 import { MobileMenu } from "./MobileMenu";
 import { RequestLink } from "./RequestPopup";
 
-export function Header() {
+/* Шапка. Телефон из админки («Настройки»), один на весь сайт */
+export async function Header() {
+  const { phone } = await getSettings();
+
   return (
     <header className="relative z-40 border-b border-[#eceeef] bg-white">
       <div className="flex h-[59px] items-center justify-between pr-[11px] pl-3 lg:h-[71px] lg:px-5">
@@ -27,11 +32,12 @@ export function Header() {
             {mainNav.map((item) => (
               <li key={item.label}>
                 {item.href ? (
-                  <Link href={item.href} className="transition-colors hover:text-accent">
+                  // AnchorLink: «О компании» прокручивает к блоку на главной
+                  <AnchorLink href={item.href} className="transition-colors hover:text-accent">
                     {item.label}
-                  </Link>
+                  </AnchorLink>
                 ) : (
-                  // Страницы пока нет: пункт виден, но не нажимается
+                  // Пункт без адреса виден, но не нажимается
                   <span className="cursor-default">{item.label}</span>
                 )}
               </li>
@@ -41,11 +47,11 @@ export function Header() {
 
         <div className="hidden shrink-0 items-center gap-[15px] lg:flex">
           <a
-            href={site.phone.href}
+            href={phone.href}
             className="flex items-center gap-[7px] text-[13px] leading-5 transition-colors hover:text-accent"
           >
             <PhoneIcon className="size-[15px] text-ink" />
-            {site.phone.label}
+            {phone.label}
           </a>
           {/* Открывает окно заявки */}
           <RequestLink
@@ -57,7 +63,7 @@ export function Header() {
         </div>
 
         {/* Меню для телефона */}
-        <MobileMenu nav={mainNav} phone={site.phone} />
+        <MobileMenu nav={mainNav} phone={phone} />
       </div>
     </header>
   );

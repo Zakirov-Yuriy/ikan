@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { ApartmentCardData } from "@/components/catalog/ApartmentCard";
 import { cardLabels } from "@/content/apartment-cards";
 import type { Apartment } from "@/content/apartments";
@@ -15,6 +16,7 @@ import type {
 import { consultation as consultationDefaults } from "@/content/home";
 import { paths } from "@/content/paths";
 import { restaurantPage } from "@/content/restaurant";
+import { site, type SitePhone, type SiteSettings } from "@/content/site";
 
 /*
  * Данные с бэкенда (backend-ikan, Laravel). Адрес в .env.local:
@@ -182,7 +184,13 @@ async function api<T>(path: string): Promise<T | null> {
       headers: { Accept: "application/json" },
       cache: "no-store",
     });
-  } catch {
+  } catch (error) {
+    /*
+     * При сборке Next сам прерывает запрос без кэша особой ошибкой, чтобы
+     * отдать страницу при каждом обращении, а не собрать заранее. Её нужно
+     * пропустить дальше, иначе сборка падает на страницах без force-dynamic.
+     */
+    if (isNextBailout(error)) throw error;
     throw new Error(
       `Бэкенд не отвечает по адресу ${BACKEND_URL}. Запустите его: php artisan serve`,
     );
@@ -193,6 +201,16 @@ async function api<T>(path: string): Promise<T | null> {
   }
   const body = (await response.json()) as { data: T };
   return body.data;
+}
+
+function isNextBailout(error: unknown): boolean {
+  if (typeof error !== "object" || error === null) return false;
+  const { digest, name } = error as { digest?: unknown; name?: unknown };
+  return (
+    digest === "DYNAMIC_SERVER_USAGE" ||
+    name === "DynamicServerError" ||
+    (typeof digest === "string" && digest.startsWith("NEXT_"))
+  );
 }
 
 /* Список ЖК для вкладок, включая пустые */
@@ -224,6 +242,16 @@ export async function getRestaurant(): Promise<RestaurantData | null> {
   const item = await api<ApiRestaurant>("/restaurant");
   return item ? toRestaurant(item) : null;
 }
+
+/*
+ * Общие настройки из админки: телефон. Нужны шапке, подвалу и app/layout.tsx
+ * на каждой странице, поэтому ответ запоминается на время одного запроса
+ * (cache из React): к бэкенду уходит один вызов, а не три.
+ */
+export const getSettings = cache(async (): Promise<SiteSettings> => {
+  const item = await api<{ phone: SitePhone }>("/site");
+  return { phone: item?.phone ?? site.phone };
+});
 
 /*
  * Главная страница целиком. Тексты загружаются в бэкенд командой
@@ -341,22 +369,27 @@ function toCard(item: ApiCard): ApartmentCardData {
  * Галерея страницы: на компьютере ровно четыре места. Если фотографий
  * меньше, они повторяются; если нет совсем, стоит фото карточки или заглушка.
  */
-function gallery(photos: ApiPhoto[], fallback: ApiPhoto | null) {
+function gallery(photos: ApiPhoto[], fallback: ApiPhoto | null, href: string) {
   const list = photos.length > 0 ? photos : fallback ? [fallback] : [];
   const four = Array.from({ length: 4 }, (_, i) =>
     list.length > 0 ? photo(list[i % list.length]) : noPhoto,
   );
   return {
     photos: four.map(({ src, alt }) => ({ src, alt })),
-    all: {
-      label: apartmentPage.allPhotos(list.length),
-      href: apartmentPage.allPhotosHref,
-    },
+    all: { label: apartmentPage.allPhotos(list.length), href },
+    /* Все фотографии без повторов, для страницы «Все N фото» */
+    list: (list.length > 0 ? list.map(photo) : [noPhoto]).map(
+      ({ src, alt }) => ({ src, alt }),
+    ),
   };
 }
 
 function toApartment(item: ApiApartment): Apartment {
-  const base = gallery(item.gallery, item.photos.card);
+  const { list, ...base } = gallery(
+    item.gallery,
+    item.photos.card,
+    paths.apartmentPhotos(item.slug),
+  );
   const mobile = photo(
     item.photo_mobile ??
       item.gallery[0] ??
@@ -371,6 +404,7 @@ function toApartment(item: ApiApartment): Apartment {
   ].filter((stat) => stat.value !== "");
 
   return {
+    slug: item.slug,
     meta: {
       title: item.meta.title ?? `${item.name}: ИКАН`,
       description: item.meta.description ?? item.description ?? "",
@@ -384,6 +418,7 @@ function toApartment(item: ApiApartment): Apartment {
       ...base,
       mobilePhoto: { src: mobile.src, alt: mobile.alt },
     },
+    photos: list,
     summary: {
       status: item.status_label,
       location: location(item.city, item.floor),
@@ -429,7 +464,7 @@ function toApartment(item: ApiApartment): Apartment {
 }
 
 function toRestaurant(item: ApiRestaurant) {
-  const base = gallery(item.gallery, null);
+  const { list, ...base } = gallery(item.gallery, null, paths.restaurantPhotos);
   const mobile = photo(item.photo_mobile ?? item.gallery[0] ?? null);
   const priceText = item.price_text ?? restaurantPage.priceOnRequest;
 
@@ -447,6 +482,7 @@ function toRestaurant(item: ApiRestaurant) {
       ...base,
       mobilePhoto: { src: mobile.src, alt: mobile.alt },
     },
+    photos: list,
     summary: {
       status: item.status ?? "",
       location: location(item.city, item.floor),

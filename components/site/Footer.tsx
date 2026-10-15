@@ -1,9 +1,13 @@
 import Image from "next/image";
-import Link from "next/link";
 import { footer, site } from "@/content/site";
+import { getSettings } from "@/lib/api";
+import { AnchorLink } from "./AnchorLink";
 import { CallbackForm } from "./CallbackForm";
 
-export function Footer() {
+/* Подвал. Телефон из админки («Настройки»), один на весь сайт */
+export async function Footer() {
+  const { phone } = await getSettings();
+
   return (
     <footer className="bg-navy text-navy-text">
       <div className="shell pt-[39px] pb-[28px] max-lg:w-[calc(100%-3.5rem)] lg:pt-[35px] lg:pb-[63px]">
@@ -35,10 +39,10 @@ export function Footer() {
             {/* На телефоне и планшете иконки стоят здесь, между адресом и телефоном */}
             <Socials className="mt-[19px] gap-5 lg:hidden" />
             <a
-              href={footer.phone.href}
+              href={phone.href}
               className="mt-5 block w-fit font-display text-[17px] leading-[23px] font-medium text-white transition-colors hover:text-sky lg:mt-[13px]"
             >
-              {footer.phone.label}
+              {phone.label}
             </a>
           </div>
 
@@ -61,6 +65,9 @@ export function Footer() {
           {footer.legal.map((line) => (
             <p key={line}>{line}</p>
           ))}
+          <p>
+            {footer.contacts.label} {footer.contacts.email} · {phone.label}
+          </p>
         </div>
       </div>
     </footer>
@@ -106,9 +113,10 @@ function FooterColumn({
       <ul className="mt-[22.5px] grid gap-y-[14.5px] text-[13px] leading-[19.5px] text-white/58">
         {column.links.map((link) => (
           <li key={link.label} className="max-w-[190px]">
-            <Link href={link.href} className="transition-colors hover:text-white">
+            {/* AnchorLink: «О компании» прокручивает к блоку на главной */}
+            <AnchorLink href={link.href} className="transition-colors hover:text-white">
               {link.label}
-            </Link>
+            </AnchorLink>
           </li>
         ))}
       </ul>

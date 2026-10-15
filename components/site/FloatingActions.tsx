@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { PhoneIcon, TelegramIcon } from "@/components/ui/icons";
 import { copyPageUrl } from "@/lib/share";
 import { ShareNotice, useShareNotice } from "./ShareNotice";
+import { useSiteSettings } from "./SiteSettings";
 
 type Props = {
-  phoneHref: string;
   callbackHref: string;
   /*
    * В макетах кнопки нарисованы по-разному:
@@ -36,8 +36,11 @@ const looks = {
  * Пока открыто окно заявки, полоса прокрутки пропадает, и кнопки отодвигаются
  * на её ширину (--scrollbar-gap), чтобы остаться на месте.
  */
-export function FloatingActions({ phoneHref, callbackHref, variant = "home" }: Props) {
+export function FloatingActions({ callbackHref, variant = "home" }: Props) {
   const look = looks[variant];
+  /* Телефон из админки («Настройки»), один на весь сайт */
+  const { phone } = useSiteSettings();
+  const phoneHref = phone.href;
   const [hidden, setHidden] = useState(false);
   const share = useShareNotice();
 

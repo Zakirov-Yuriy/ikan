@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { ArrowIcon } from "@/components/ui/icons";
-import { requestStatus, site } from "@/content/site";
+import { requestStatus } from "@/content/site";
 import { sendRequest } from "@/lib/request";
+import { useSiteSettings } from "./SiteSettings";
 
 type Props = {
   form: {
@@ -26,6 +27,8 @@ type Status =
 
 export function CallbackForm({ form }: Props) {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
+  /* Телефон из админки для подсказки «позвоните нам» после ошибки */
+  const { phone } = useSiteSettings();
 
   /* Заявка уходит на сервер сайта (lib/request.ts), дальше в бэкенд и админку */
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -130,8 +133,8 @@ export function CallbackForm({ form }: Props) {
       {status.kind === "failed" && (
         <p role="alert" className="mt-3 text-[12px] leading-[18px] text-white/80">
           {requestStatus.failed} {status.message} {requestStatus.retry}{" "}
-          <a href={site.phone.href} className="whitespace-nowrap text-sky">
-            {site.phone.label}
+          <a href={phone.href} className="whitespace-nowrap text-sky">
+            {phone.label}
           </a>
         </p>
       )}

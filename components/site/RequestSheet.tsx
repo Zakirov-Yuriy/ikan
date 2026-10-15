@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useId, useState, type FormEvent } from "react";
 import { ArrowIcon } from "@/components/ui/icons";
-import { requestStatus, site } from "@/content/site";
+import { requestStatus } from "@/content/site";
 import { sendRequest } from "@/lib/request";
 import { Modal, useDesktop } from "./Modal";
+import { useSiteSettings } from "./SiteSettings";
 
 export type RequestFormTexts = {
   eyebrow: string;
@@ -53,6 +54,8 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
   const interestId = useId();
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const desktop = useDesktop();
+  /* Телефон из админки для подсказки «позвоните нам» после ошибки */
+  const { phone } = useSiteSettings();
 
   /* Заявка уходит на сервер сайта (lib/request.ts), дальше в бэкенд и админку */
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -272,8 +275,8 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
         {status.kind === "failed" && (
           <p role="alert" className="mt-3 pb-1 text-[12px] leading-[18px] text-muted">
             {requestStatus.failed} {status.message} {requestStatus.retry}{" "}
-            <a href={site.phone.href} className="whitespace-nowrap text-accent">
-              {site.phone.label}
+            <a href={phone.href} className="whitespace-nowrap text-accent">
+              {phone.label}
             </a>
           </p>
         )}

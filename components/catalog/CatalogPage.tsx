@@ -41,11 +41,7 @@ export function CatalogPage({
       </main>
       <Footer />
       {floating && (
-        <FloatingActions
-          phoneHref={site.phone.href}
-          callbackHref={site.callbackHref}
-          variant="list"
-        />
+        <FloatingActions callbackHref={site.callbackHref} variant="list" />
       )}
     </>
   );

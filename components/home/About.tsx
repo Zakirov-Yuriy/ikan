@@ -10,7 +10,8 @@ const icons: Record<FeatureIcon, typeof ChartIcon> = {
 /* «О компании» и преимущества. Тексты и значки из админки */
 export function About({ about }: { about: AboutData }) {
   return (
-    <section className="bg-white pt-[44px] lg:pt-[77px]">
+    /* id="about": сюда ведёт «О компании» в шапке, меню телефона и подвале */
+    <section id="about" className="bg-white pt-[44px] lg:pt-[77px]">
       <div className="shell">
         <div className="lg:grid lg:grid-cols-[552px_minmax(0,1fr)] lg:items-end">
           <div>

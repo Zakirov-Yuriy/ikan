@@ -94,7 +94,7 @@ export function About({ about, requestHref, variant = "restaurant" }: Props) {
         >
           {about.features.map((feature, index) => (
             <div
-              key={feature.value}
+              key={index}
               className={`border-t border-[#dfe5e5] ${look.feature}`}
             >
               <dt className="text-[11px] leading-[16.5px] text-muted">
@@ -134,9 +134,9 @@ export function About({ about, requestHref, variant = "restaurant" }: Props) {
           <span className="block max-w-[200px]">{data.title}</span>
         </h3>
         <dl>
-          {data.items.map((item) => (
+          {data.items.map((item, index) => (
             <div
-              key={item.label}
+              key={index}
               className={`border-b border-[#d8ddd9] pb-[13px] last:border-b-0 last:pb-[12.5px] lg:pt-[15.5px] lg:pb-[12.5px] ${look.dataItem}`}
             >
               <dt className="text-[11px] leading-[16.5px] text-muted">

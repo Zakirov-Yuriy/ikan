@@ -11,6 +11,11 @@ export const paths = {
   newBuilds: "/novostroyki",
   /* «Инвестиции в строительство» */
   investments: "/investitsii",
-  /* Страница одного апартамента */
+  /* Страница одного апартамента и страница со всеми его фотографиями */
   apartment: (slug: string) => `/apartamenty/${slug}`,
+  apartmentPhotos: (slug: string) => `/apartamenty/${slug}/foto`,
+  /* Все фотографии ресторана */
+  restaurantPhotos: "/restoran/foto",
+  /* Блок «О компании» посередине главной */
+  about: "/#about",
 };

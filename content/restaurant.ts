@@ -27,4 +27,11 @@ export const restaurantPage = {
   consultationTitle: "Получить консультацию по объекту",
   /* Блок «Персональный подбор»: в макете он есть только на телефоне */
   consultationImage: "/images/restaurant/consultation-mobile.jpg",
+  /* Страница со всеми фотографиями (макета не было) */
+  photosPage: {
+    crumb: "Фото",
+    title: "Фотографии",
+    back: "Назад к ресторану",
+    open: "Открыть в полном размере",
+  },
 };

@@ -6,6 +6,7 @@ import { site } from "@/content/site";
 import { shareNative } from "@/lib/share";
 import { ShareNotice, useShareNotice } from "./ShareNotice";
 import { ShareSheet } from "./ShareSheet";
+import { useSiteSettings } from "./SiteSettings";
 
 /*
  * Полоса с тремя кнопками, закреплённая у нижнего края экрана на телефоне и
@@ -21,6 +22,7 @@ import { ShareSheet } from "./ShareSheet";
  * показывает свою полосу поверх этой.
  */
 export function MobileBar() {
+  const { phone } = useSiteSettings();
   const share = useShareNotice();
   const [sheet, setSheet] = useState(false);
 
@@ -41,7 +43,7 @@ export function MobileBar() {
           className="absolute right-[14px] bottom-full mb-[10px] text-right"
         />
         <a
-          href={site.phone.href}
+          href={phone.href}
           className="flex h-[46px] flex-1 items-center justify-center gap-[8px] rounded-[10px] bg-[#29ba44] text-[12px] leading-5 font-semibold text-white active:brightness-95"
         >
           <PhoneIcon className="size-[17px]" />

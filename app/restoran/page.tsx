@@ -9,7 +9,7 @@ import { FloatingActions } from "@/components/site/FloatingActions";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { site } from "@/content/site";
-import { getRestaurant } from "@/lib/api";
+import { getRestaurant, getSettings } from "@/lib/api";
 
 /* Данные из бэкенда при каждом запросе, без сборки заранее */
 export const dynamic = "force-dynamic";
@@ -21,7 +21,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /* «Ресторан»: содержание страницы из бэкенда при каждом запросе */
 export default async function RestaurantPage() {
-  const restaurant = await getRestaurant();
+  const [restaurant, { phone }] = await Promise.all([
+    getRestaurant(),
+    getSettings(),
+  ]);
   if (!restaurant) {
     throw new Error(
       "В бэкенде нет записи ресторана. Выполните: php artisan db:seed",
@@ -43,7 +46,7 @@ export default async function RestaurantPage() {
           <SummaryCard
             summary={restaurant.summary}
             requestHref={site.callbackHref}
-            phoneHref={site.phone.href}
+            phoneHref={phone.href}
           />
         </div>
         <InfoTable {...restaurant.info} requestHref={site.callbackHref} />
@@ -57,11 +60,7 @@ export default async function RestaurantPage() {
       </main>
       <Footer />
       {/* Закреплённые кнопки справа на компьютере: с 14.10 на всех страницах */}
-      <FloatingActions
-        phoneHref={site.phone.href}
-        callbackHref={site.callbackHref}
-        variant="list"
-      />
+      <FloatingActions callbackHref={site.callbackHref} variant="list" />
     </>
   );
 }

@@ -2,7 +2,9 @@ import type { Metadata, Viewport } from "next";
 import { CookieConsent } from "@/components/site/CookieConsent";
 import { MobileBar } from "@/components/site/MobileBar";
 import { RequestPopupProvider } from "@/components/site/RequestPopup";
+import { SiteSettingsProvider } from "@/components/site/SiteSettings";
 import { cookieConsent, requestForm } from "@/content/site";
+import { getSettings } from "@/lib/api";
 import { fontVariables } from "./fonts";
 import "./globals.css";
 
@@ -30,7 +32,10 @@ export const viewport: Viewport = {
  */
 const startAtTopOnReload = `(function(){try{var n=performance.getEntriesByType("navigation")[0];if(!n||n.type!=="reload"||location.hash)return;var on=true;function up(){if(on&&(scrollY>0||scrollX>0))scrollTo({top:0,left:0,behavior:"instant"})}function tick(){if(on){up();requestAnimationFrame(tick)}}function stop(){on=false;removeEventListener("scroll",up)}addEventListener("scroll",up,{passive:true});requestAnimationFrame(tick);["wheel","touchstart","keydown","mousedown"].forEach(function(e){addEventListener(e,stop,{once:true,passive:true})});addEventListener("load",function(){up();setTimeout(stop,600)})}catch(e){}})();`;
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+/* Телефон из админки нужен на каждой странице: шапке, подвалу, полосе внизу */
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const settings = await getSettings();
+
   return (
     /*
      * data-scroll-behavior нужен Next: на сайте включена плавная прокрутка,
@@ -46,12 +51,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: startAtTopOnReload }} />
       </head>
       <body className="flex min-h-full flex-col">
-        {/* Окно «Оставить заявку» общее для всех страниц */}
-        <RequestPopupProvider form={requestForm}>
-          {children}
-        </RequestPopupProvider>
-        {/* Полоса «Позвонить», «Оставить заявку», Telegram внизу экрана на телефоне */}
-        <MobileBar />
+        <SiteSettingsProvider value={settings}>
+          {/* Окно «Оставить заявку» общее для всех страниц */}
+          <RequestPopupProvider form={requestForm}>
+            {children}
+          </RequestPopupProvider>
+          {/* Полоса «Позвонить», «Оставить заявку», Telegram внизу экрана на телефоне */}
+          <MobileBar />
+        </SiteSettingsProvider>
         {/* Плашка «Мы используем cookie», пока человек не сделал выбор */}
         <CookieConsent texts={cookieConsent} />
       </body>

@@ -9,17 +9,20 @@ import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import type { Apartment } from "@/content/apartments";
 import { site } from "@/content/site";
+import { getSettings } from "@/lib/api";
 
 type Props = {
   apartment: Apartment;
 };
 
 /*
- * Страница одного апартамента целиком. Содержание приходит снаружи, поэтому
- * страница следующего апартамента это ещё одна запись в content/apartments.ts
- * и короткий файл в app/apartamenty.
+ * Страница одного апартамента целиком. Содержание приходит из бэкенда
+ * (app/apartamenty/[slug]/page.tsx), телефон для кнопки «Позвонить» из
+ * настроек админки.
  */
-export function ApartmentPage({ apartment }: Props) {
+export async function ApartmentPage({ apartment }: Props) {
+  const { phone } = await getSettings();
+
   return (
     <>
       <Header />
@@ -37,7 +40,7 @@ export function ApartmentPage({ apartment }: Props) {
           <SummaryCard
             summary={apartment.summary}
             requestHref={site.callbackHref}
-            phoneHref={site.phone.href}
+            phoneHref={phone.href}
             variant="apartment"
           />
         </div>
@@ -60,11 +63,7 @@ export function ApartmentPage({ apartment }: Props) {
       </main>
       <Footer />
       {/* Закреплённые кнопки справа на компьютере: с 14.10 на всех страницах */}
-      <FloatingActions
-        phoneHref={site.phone.href}
-        callbackHref={site.callbackHref}
-        variant="list"
-      />
+      <FloatingActions callbackHref={site.callbackHref} variant="list" />
     </>
   );
 }
