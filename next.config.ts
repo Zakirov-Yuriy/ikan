@@ -50,6 +50,12 @@ const backendIsLocal =
  */
 const nextConfig: NextConfig = {
   allowedDevOrigins: homeNetworks,
+  /*
+   * Кружок «N» с числом ошибок внизу слева в режиме разработки скрыт, чтобы
+   * не мешал смотреть дизайн (Анна, 15.10). На собранном сайте его нет и так.
+   * Ошибки, из-за которых страница не работает, Next всё равно покажет окном.
+   */
+  devIndicators: false,
   images: {
     remotePatterns: backendHosts,
     dangerouslyAllowLocalIP: backendIsLocal,
