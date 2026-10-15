@@ -8,22 +8,36 @@ import { SummaryCard } from "@/components/object/SummaryCard";
 import { FloatingActions } from "@/components/site/FloatingActions";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
-import { restaurant } from "@/content/restaurant";
 import { site } from "@/content/site";
+import { getRestaurant } from "@/lib/api";
 
-export const metadata: Metadata = restaurant.meta;
+/* Данные из бэкенда при каждом запросе, без сборки заранее */
+export const dynamic = "force-dynamic";
 
-export default function RestaurantPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const restaurant = await getRestaurant();
+  return restaurant ? restaurant.meta : {};
+}
+
+/* «Ресторан»: содержание страницы из бэкенда при каждом запросе */
+export default async function RestaurantPage() {
+  const restaurant = await getRestaurant();
+  if (!restaurant) {
+    throw new Error(
+      "В бэкенде нет записи ресторана. Выполните: php artisan db:seed",
+    );
+  }
+
   return (
     <>
       <Header />
       <main className="flex-1 bg-paper">
         <PageIntro {...restaurant.intro} />
         {/*
-          Фотографии и карточка. На компьютере это две колонки, 681 и 320 px
-          с промежутком 23 px, на узком экране они сжимаются в той же пропорции.
-          На телефоне карточка идёт сразу под фотографией, без промежутка.
-        */}
+        Фотографии и карточка. На компьютере это две колонки, 681 и 320 px
+        с промежутком 23 px, на узком экране они сжимаются в той же пропорции.
+        На телефоне карточка идёт сразу под фотографией, без промежутка.
+      */}
         <div className="shell grid pt-[14px] lg:grid-cols-[minmax(0,681fr)_minmax(0,320fr)] lg:gap-x-[23px] lg:pt-[28px]">
           <Gallery {...restaurant.gallery} />
           <SummaryCard

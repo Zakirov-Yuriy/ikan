@@ -42,7 +42,11 @@ export const scenarios = [
        * и при наведении на ссылку сдвигается вправо. У остальных строк широких
        * фотографий пока нет, обычная растягивается до той же ширины.
        */
-      wide: { src: "/images/home/scenario-01-wide.jpg", width: 342, height: 228 },
+      wide: {
+        src: "/images/home/scenario-01-wide.jpg",
+        width: 342,
+        height: 228,
+      },
     },
   },
   {

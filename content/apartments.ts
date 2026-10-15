@@ -1,116 +1,78 @@
 /*
- * Страницы апартаментов. Ключ это последняя часть адреса: /apartamenty/a4.
- * У каждого апартамента свой файл страницы: app/apartamenty/a4/page.tsx.
- * Сейчас всё записано здесь, позже эти значения будут приходить из админки.
- * Тексты взяты из макетов для компьютера и для телефона.
- * Пока есть только A4: для остальных апартаментов макетов не было.
+ * Страница апартамента. Содержание с 15.10 приходит из бэкенда (lib/api.ts,
+ * getApartment), здесь форма этого содержания и подписи, одинаковые для всех
+ * апартаментов. Тексты подписей взяты из макетов A4.
  */
 
-import { paths } from "./paths";
+type Photo = { src: string; alt: string };
+
+export type Apartment = {
+  meta: { title: string; description: string };
+  crumbs: { label: string; href: string }[];
+  gallery: {
+    /* Две большие фотографии сверху и две маленькие снизу, в этом порядке */
+    photos: Photo[];
+    /* На телефоне в макете одна фотография */
+    mobilePhoto: Photo;
+    all: { label: string; href: string };
+  };
+  summary: {
+    status: string;
+    location: string;
+    title: string;
+    text: string;
+    textMobile?: string;
+    stats: { value: string; label: string }[];
+    priceLabel: string;
+    price: string;
+    request: string;
+    call: string;
+  };
+  info: {
+    title: string;
+    columns: string[];
+    row: string[];
+    note: string;
+  };
+  about: {
+    eyebrow: string;
+    title: string;
+    text: string;
+    featuresTitle: string;
+    features: { label?: string; value: string }[];
+    data: {
+      eyebrow: string;
+      eyebrowMobile?: string;
+      title: string;
+      items: { label: string; value: string }[];
+      link: string;
+    };
+  };
+  consultation: { title: string; image: string };
+};
 
 /* Страницы и действия, которые ещё не сделаны */
 const SOON = "#";
 
-/* Фотография реки для блока «Персональный подбор», общая со страницей ресторана */
-const river = "/images/restaurant/consultation-mobile.jpg";
-
-export const apartments = {
-  a4: {
-    meta: {
-      title: "Апартамент A4 в SVETOGORSKA 27, Златибор: ИКАН",
-      description:
-        "Студия 28 м² на уровне «Приземье» в жилом комплексе SVETOGORSKA 27 в Златиборе. Полностью меблирована, цена 75 500 € с НДС.",
-    },
-    crumbs: [
-      { label: "Главная", href: "/" },
-      { label: "Апартаменты", href: paths.living },
-      { label: "A4", href: "" },
-    ],
-    gallery: {
-      /* Две большие фотографии сверху и две маленькие снизу, в этом порядке */
-      photos: [
-        {
-          src: "/images/apartments/a4-01.jpg",
-          alt: "Кухня с мойкой и навесными шкафами",
-        },
-        {
-          src: "/images/apartments/a4-02.jpg",
-          alt: "Гостиная с окном и журнальным столиком",
-        },
-        {
-          src: "/images/apartments/a4-03.jpg",
-          alt: "Спальня с двуспальной кроватью",
-        },
-        {
-          src: "/images/apartments/a4-04.jpg",
-          alt: "Гостиная с диваном и креслом",
-        },
-      ],
-      /* На телефоне в макете одна фотография, со своим кадром */
-      mobilePhoto: {
-        src: "/images/apartments/a4-mobile.jpg",
-        alt: "Гостиная с окном и журнальным столиком",
-      },
-      all: { label: "Все 12 фото", href: SOON },
-    },
-    summary: {
-      status: "Готово к заселению",
-      location: "Златибор · Приземье",
-      title: "Апартамент A4",
-      text: "Компактная студия в жилом комплексе SVETOGORSKA 27, расположенном в Zlatibor, Сербия. Продуманное пространство, современный интерьер и уютная атмосфера создают комфортные условия для проживания и отдыха.",
-      /* На телефоне в макете текст короче */
-      textMobile: "Студия в проекте SVETOGORSKA 27, Златибор.",
-      stats: [
-        { value: "Студия", label: "тип" },
-        { value: "28 м²", label: "площадь" },
-        { value: "Приземье", label: "этаж" },
-      ],
-      priceLabel: "Стоимость",
-      price: "75 500 €",
-      request: "Оставить заявку",
-      call: "Позвонить",
-    },
-    info: {
-      title: "Информация об апартаменте",
-      columns: ["Тип", "Площадь", "Стоимость", "Этаж"],
-      row: ["Студия", "28 м²", "75 500 €", "Приземье"],
-      note: "Цена включает НДС. Апартамент полностью меблирован. Актуальный статус наличия необходимо подтвердить перед сделкой.",
-    },
-    about: {
-      eyebrow: "Об объекте",
-      title: "Апартамент A4 в SVETOGORSKA 27",
-      text: "Апартамент типа «студия» площадью 28 м² расположен на уровне «Приземье». В презентации показаны интерьер и планировка конкретного апартамента.",
-      featuresTitle: "Характеристики",
-      features: [
-        { value: "Дневная зона с обеденной зоной" },
-        { value: "Кухня" },
-        { value: "Ванная комната" },
-        { value: "Французский балкон" },
-        { value: "Вид на природу" },
-        { value: "Полностью меблирован" },
-        { value: "НДС включён" },
-      ],
-      data: {
-        eyebrow: "Данные",
-        /* На телефоне в макете надпись длиннее */
-        eyebrowMobile: "Данные презентации",
-        title: "Апартамент A4",
-        items: [
-          { label: "Меблировка", value: "Полностью меблирован" },
-          { label: "НДС", value: "Включён в стоимость" },
-          { label: "Статус наличия", value: "Требует подтверждения" },
-        ],
-        link: "Уточнить наличие",
-      },
-    },
-    consultation: {
-      title: "Получить консультацию по объекту",
-      image: river,
-    },
-  },
+export const apartmentPage = {
+  /* Средняя крошка пути: ведёт на список «для себя» */
+  crumb: "Апартаменты",
+  /* «Все 12 фото»; страницы со всеми фотографиями пока нет, макета не было */
+  allPhotos: (count: number) => `Все ${count} фото`,
+  allPhotosHref: SOON,
+  priceLabel: "Стоимость",
+  priceOnRequest: "По запросу",
+  request: "Оставить заявку",
+  call: "Позвонить",
+  infoTitle: "Информация об апартаменте",
+  infoColumns: ["Тип", "Площадь", "Стоимость", "Этаж"],
+  aboutEyebrow: "Об объекте",
+  featuresTitle: "Характеристики",
+  dataEyebrow: "Данные",
+  /* На телефоне в макете надпись длиннее */
+  dataEyebrowMobile: "Данные презентации",
+  dataLink: "Уточнить наличие",
+  consultationTitle: "Получить консультацию по объекту",
+  /* Фотография реки для блока «Персональный подбор», общая со страницей ресторана */
+  consultationImage: "/images/restaurant/consultation-mobile.jpg",
 };
-
-export type ApartmentSlug = keyof typeof apartments;
-
-/* Содержание одной страницы апартамента */
-export type Apartment = (typeof apartments)[ApartmentSlug];

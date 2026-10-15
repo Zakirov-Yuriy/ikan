@@ -1,14 +1,22 @@
 import type { Metadata } from "next";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
 import { ComplexList } from "@/components/catalog/ComplexList";
-import { complexes } from "@/content/complexes";
 import { Consultation } from "@/components/home/Consultation";
 import { living } from "@/content/living";
+import { getApartmentCards, getComplexes } from "@/lib/api";
+
+/* Данные из бэкенда при каждом запросе, без сборки заранее */
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = living.meta;
 
-/* «Квартиры для собственного проживания»: список апартаментов */
-export default function LivingPage() {
+/* «Квартиры для собственного проживания»: список из бэкенда при каждом запросе */
+export default async function LivingPage() {
+  const [complexes, cards] = await Promise.all([
+    getComplexes(),
+    getApartmentCards("living"),
+  ]);
+
   return (
     <CatalogPage
       intro={living.intro}
@@ -18,7 +26,7 @@ export default function LivingPage() {
         <ComplexList
           complexes={complexes}
           columns={living.columns}
-          cards={living.cards}
+          cards={cards}
         />
       }
     >

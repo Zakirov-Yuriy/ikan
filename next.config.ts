@@ -16,10 +16,44 @@ const homeNetworks = [
   ...Array.from({ length: 16 }, (_, i) => `172.${16 + i}.*.*`),
 ];
 
+/*
+ * Фотографии объектов приходят с бэкенда (BACKEND_URL из .env.local, по
+ * умолчанию http://localhost:8000). next/image берёт картинки с чужого адреса
+ * только из этого списка. localhost и 127.0.0.1 на порту 8000 разрешены
+ * всегда, потому что бэкенд локально отвечает по обоим.
+ */
+const backend = new URL(process.env.BACKEND_URL ?? "http://localhost:8000");
+const backendHosts = Array.from(
+  new Set([backend.hostname, "localhost", "127.0.0.1"]),
+).map((hostname) => ({
+  protocol: backend.protocol.replace(":", "") as "http" | "https",
+  hostname,
+  port: backend.port,
+  pathname: "/media/**",
+}));
+
+/*
+ * Пока бэкенд локальный (localhost, 127.0.0.1, домашняя сеть), next/image
+ * нужно отдельно разрешить брать картинки с локальных адресов: по умолчанию
+ * он их не берёт. На хостинге у бэкенда будет обычный адрес, и это не нужно.
+ */
+const backendIsLocal =
+  /^(localhost|127\.\d+\.\d+\.\d+|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)$/.test(
+    backend.hostname,
+  );
+
+/*
+ * Страницы с данными из бэкенда (списки, апартамент, ресторан) собираются
+ * сервером при каждом запросе, остальные при сборке. Режим cacheComponents
+ * из заготовки выключен 15.10: с ним переход по ссылке показывал пустую
+ * страницу на полсекунды, пока подгружались данные.
+ */
 const nextConfig: NextConfig = {
   allowedDevOrigins: homeNetworks,
-  cacheComponents: true,
-  partialPrefetching: true,
+  images: {
+    remotePatterns: backendHosts,
+    dangerouslyAllowLocalIP: backendIsLocal,
+  },
   turbopack: {
     rules: {
       "*.css": {
