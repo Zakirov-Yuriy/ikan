@@ -1,8 +1,13 @@
 import Image from "next/image";
 import { ArrowIcon } from "@/components/ui/icons";
-import { consultation } from "@/content/home";
+import { consultation, type ConsultationData } from "@/content/home";
 
 type Props = {
+  /*
+   * Надпись, заголовок, текст, кнопка и фотография блока. На главной они
+   * приходят из админки; на остальных страницах общие из content/home.ts.
+   */
+  content?: ConsultationData;
   /* Заголовок, если на странице он не такой, как на главной */
   title?: string;
   /* Заголовок для телефона, если в макете он там другой */
@@ -82,7 +87,8 @@ const looks = {
 };
 
 export function Consultation({
-  title = consultation.title,
+  content = consultation,
+  title = content.title,
   titleMobile,
   mobileImage,
   mobileSize = "compact",
@@ -116,7 +122,7 @@ export function Consultation({
             </>
           ) : (
             <Image
-              src={consultation.image}
+              src={content.image}
               alt=""
               fill
               sizes="(min-width: 1024px) 1024px, 100vw"
@@ -140,7 +146,7 @@ export function Consultation({
             className={`absolute inset-0 bg-linear-to-b lg:hidden ${look.shade}`}
           />
           <div className="relative">
-            <p className="eyebrow text-sky">{consultation.eyebrow}</p>
+            <p className="eyebrow text-sky">{content.eyebrow}</p>
             <h2 className={`title-section lg:mt-[14px] ${look.title}`}>
               {titleMobile ? (
                 <>
@@ -154,15 +160,15 @@ export function Consultation({
             <p
               className={`text-white/70 lg:mt-0 lg:max-w-none lg:text-[16px] lg:leading-6 ${look.text}`}
             >
-              {consultation.text}
+              {content.text}
             </p>
           </div>
           {/* Прокручивает страницу к форме «Заказать обратный звонок» в подвале */}
           <a
-            href={consultation.button.href}
+            href={content.button.href}
             className={`relative flex h-12 shrink-0 items-center justify-center gap-[14px] rounded-[10px] bg-sky px-[26px] font-medium text-navy transition-colors hover:bg-white lg:mt-0 ${look.button} ${wide ? "lg:h-[50px] lg:w-[284px] lg:justify-between lg:pr-[23.5px] lg:pl-[33.5px]" : look.desktopButton}`}
           >
-            {consultation.button.label}
+            {content.button.label}
             <ArrowIcon className="size-4" />
           </a>
         </div>

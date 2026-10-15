@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowIcon } from "@/components/ui/icons";
-import { directions } from "@/content/home";
+import type { DirectionsData } from "@/content/home";
 
-export function Directions() {
+/* «Наши направления»: карточки из админки, каждая ведёт на выбранную страницу */
+export function Directions({ directions }: { directions: DirectionsData }) {
   return (
     <section className="bg-white pt-[55px] pb-[34px] lg:pt-[55px] lg:pb-[90px]">
       <div className="shell">
@@ -12,7 +13,7 @@ export function Directions() {
         </h2>
         <ul className="mt-[17px] grid gap-2 sm:grid-cols-2 lg:mt-[18px] lg:grid-cols-4 lg:gap-[13px]">
           {directions.items.map((item, index) => (
-            <li key={item.title}>
+            <li key={index}>
               <Link
                 href={item.href}
                 /*

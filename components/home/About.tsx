@@ -1,5 +1,5 @@
 import { ChartIcon, KeyIcon, ShieldIcon } from "@/components/ui/icons";
-import { about, type FeatureIcon } from "@/content/home";
+import type { AboutData, FeatureIcon } from "@/content/home";
 
 const icons: Record<FeatureIcon, typeof ChartIcon> = {
   chart: ChartIcon,
@@ -7,7 +7,8 @@ const icons: Record<FeatureIcon, typeof ChartIcon> = {
   key: KeyIcon,
 };
 
-export function About() {
+/* «О компании» и преимущества. Тексты и значки из админки */
+export function About({ about }: { about: AboutData }) {
   return (
     <section className="bg-white pt-[44px] lg:pt-[77px]">
       <div className="shell">
@@ -31,7 +32,7 @@ export function About() {
             const Icon = icons[feature.icon];
             return (
               <li
-                key={feature.label}
+                key={index}
                 className="relative flex min-h-[115px] items-start border-b border-[#e3e5e1] py-5 pr-4 pl-3 max-lg:odd:border-r max-lg:odd:pl-0 lg:min-h-[125px] lg:items-center lg:border-r lg:border-b-0 lg:pt-7 lg:pr-6 lg:pb-6 lg:pl-6 lg:first:pl-0 lg:last:border-r-0"
               >
                 <span className="absolute right-[14px] bottom-[9px] text-[9.5px] leading-3 text-faint lg:top-[20px] lg:right-[15px] lg:bottom-auto">

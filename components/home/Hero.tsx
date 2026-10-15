@@ -1,8 +1,9 @@
 import { RequestLink } from "@/components/site/RequestPopup";
 import { ArrowIcon } from "@/components/ui/icons";
-import { hero } from "@/content/home";
+import type { HeroData } from "@/content/home";
 
-export function Hero() {
+/* Первый экран. Тексты из админки, раздел «Главная сайта» */
+export function Hero({ hero }: { hero: HeroData }) {
   return (
     <section className="bg-paper">
       <div className="shell flex flex-col pt-[35px] pb-[31px] lg:flex-row lg:items-end lg:justify-between lg:pt-[75px] lg:pb-[67px]">

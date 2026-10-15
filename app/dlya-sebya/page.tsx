@@ -3,23 +3,26 @@ import { CatalogPage } from "@/components/catalog/CatalogPage";
 import { ComplexList } from "@/components/catalog/ComplexList";
 import { Consultation } from "@/components/home/Consultation";
 import { living } from "@/content/living";
-import { getApartmentCards, getComplexes } from "@/lib/api";
+import { getApartmentCards, getComplexes, getPage } from "@/lib/api";
 
 /* Данные из бэкенда при каждом запросе, без сборки заранее */
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = living.meta;
+export async function generateMetadata(): Promise<Metadata> {
+  return (await getPage("living")).meta;
+}
 
-/* «Квартиры для собственного проживания»: список из бэкенда при каждом запросе */
+/* «Квартиры для собственного проживания»: тексты и список из бэкенда при каждом запросе */
 export default async function LivingPage() {
-  const [complexes, cards] = await Promise.all([
+  const [page, complexes, cards] = await Promise.all([
+    getPage("living"),
     getComplexes(),
     getApartmentCards("living"),
   ]);
 
   return (
     <CatalogPage
-      intro={living.intro}
+      intro={{ crumbs: living.crumbs, title: page.title, lead: page.lead }}
       introVariant="catalog"
       floating
       list={
@@ -31,7 +34,8 @@ export default async function LivingPage() {
       }
     >
       <Consultation
-        titleMobile={living.consultation.titleMobile}
+        title={page.consultation.title}
+        titleMobile={page.consultation.titleMobile}
         mobileImage={living.consultation.mobileImage}
         mobileSize="large"
         className="pt-[80px] pb-[30px] lg:pt-[100px] lg:pb-[50px]"

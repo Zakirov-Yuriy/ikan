@@ -3,6 +3,16 @@ import { cardLabels } from "@/content/apartment-cards";
 import type { Apartment } from "@/content/apartments";
 import { apartmentPage } from "@/content/apartments";
 import type { Complex } from "@/content/complexes";
+import type {
+  AboutData,
+  DirectionsData,
+  FeatureIcon,
+  HeroData,
+  HomeData,
+  ObjectsData,
+  ScenarioData,
+} from "@/content/home";
+import { consultation as consultationDefaults } from "@/content/home";
 import { paths } from "@/content/paths";
 import { restaurantPage } from "@/content/restaurant";
 
@@ -90,7 +100,78 @@ type ApiRestaurant = {
   photo_mobile: ApiPhoto | null;
 };
 
+type ApiHome = {
+  meta: { title: string | null; description: string | null };
+  hero: {
+    eyebrow: string | null;
+    title: string;
+    title_accent: string | null;
+    lead: string | null;
+    primary_label: string;
+    secondary_label: string;
+    side_label: string | null;
+    side_items: string[];
+  };
+  scenarios: {
+    title: string;
+    text: string | null;
+    link: { label: string | null; href: string | null };
+    photo: ApiPhoto | null;
+    photo_wide: ApiPhoto | null;
+  }[];
+  about: {
+    eyebrow: string | null;
+    title: string | null;
+    text: string | null;
+    features_label: string | null;
+    features: { icon: string; label: string }[];
+  };
+  directions: {
+    label: string | null;
+    items: {
+      title: string;
+      text: string | null;
+      href: string | null;
+      photo: ApiPhoto | null;
+    }[];
+  };
+  objects: {
+    eyebrow: string | null;
+    title: string | null;
+    all: { label: string | null; href: string | null };
+    more: string | null;
+    items: ApiCard[];
+  };
+  consultation: {
+    eyebrow: string | null;
+    title: string | null;
+    text: string | null;
+    button_label: string | null;
+    photo: ApiPhoto | null;
+  };
+};
+
+type ApiPage = {
+  key: string;
+  url: string;
+  title: string;
+  lead: string | null;
+  meta: { title: string | null; description: string | null };
+  consultation: { title: string | null; title_mobile: string | null };
+};
+
 export type Catalog = "living" | "renting" | "newbuilds";
+
+/* Ключи страниц списков в бэкенде: /api/pages/living и так далее */
+export type PageKey = Catalog;
+
+/* Вступление страницы списка: заголовок, подзаголовок, блок подбора */
+export type PageData = {
+  title: string;
+  lead: string;
+  meta: { title: string; description: string };
+  consultation: { title: string | undefined; titleMobile: string | undefined };
+};
 
 /* Запрос к API. null, когда записи нет (404). Остальные ошибки наружу */
 async function api<T>(path: string): Promise<T | null> {
@@ -142,6 +223,42 @@ export type RestaurantData = ReturnType<typeof toRestaurant>;
 export async function getRestaurant(): Promise<RestaurantData | null> {
   const item = await api<ApiRestaurant>("/restaurant");
   return item ? toRestaurant(item) : null;
+}
+
+/*
+ * Главная страница целиком. Тексты загружаются в бэкенд командой
+ * php artisan db:seed --class=HomeSeeder; пока их нет, страница не открывается.
+ */
+export async function getHome(): Promise<HomeData> {
+  const item = await api<ApiHome>("/home");
+  if (!item) {
+    throw new Error(
+      "Тексты главной ещё не загружены в бэкенд. Выполните в его папке: php artisan db:seed --class=HomeSeeder",
+    );
+  }
+  return toHome(item);
+}
+
+/* Вступление страницы списка, загружается тем же HomeSeeder */
+export async function getPage(key: PageKey): Promise<PageData> {
+  const item = await api<ApiPage>(`/pages/${key}`);
+  if (!item) {
+    throw new Error(
+      `Тексты страницы «${key}» ещё не загружены в бэкенд. Выполните в его папке: php artisan db:seed --class=HomeSeeder`,
+    );
+  }
+  return {
+    title: item.title,
+    lead: item.lead ?? "",
+    meta: {
+      title: item.meta.title ?? `${item.title}: ИКАН`,
+      description: item.meta.description ?? item.lead ?? "",
+    },
+    consultation: {
+      title: item.consultation.title ?? undefined,
+      titleMobile: item.consultation.title_mobile ?? undefined,
+    },
+  };
 }
 
 /* Заглушка вместо фотографии, которой ещё нет */
@@ -373,6 +490,110 @@ function toRestaurant(item: ApiRestaurant) {
     consultation: {
       title: item.consultation_title ?? restaurantPage.consultationTitle,
       mobileImage: restaurantPage.consultationImage,
+    },
+  };
+}
+
+const featureIcons: FeatureIcon[] = ["chart", "shield", "key"];
+
+function toHero(item: ApiHome["hero"]): HeroData {
+  return {
+    eyebrow: item.eyebrow ?? "",
+    title: item.title,
+    titleAccent: item.title_accent ?? "",
+    lead: item.lead ?? "",
+    /* Тёмная кнопка ведёт к «Актуальным объектам», светлая открывает окно заявки */
+    primary: { label: item.primary_label, href: "#objects" },
+    secondary: { label: item.secondary_label, href: "#callback" },
+    sideLabel: item.side_label ?? "",
+    sideItems: item.side_items,
+  };
+}
+
+function toScenario(item: ApiHome["scenarios"][number]): ScenarioData {
+  const image = photo(item.photo ?? item.photo_wide);
+  return {
+    title: item.title,
+    text: item.text ?? "",
+    link: { label: item.link.label ?? "", href: item.link.href ?? "#" },
+    image: {
+      src: image.src,
+      alt: image.alt,
+      wide: item.photo_wide ? { src: item.photo_wide.url } : null,
+    },
+  };
+}
+
+function toAbout(item: ApiHome["about"]): AboutData {
+  return {
+    eyebrow: item.eyebrow ?? "",
+    title: item.title ?? "",
+    text: item.text ?? "",
+    featuresLabel: item.features_label ?? "",
+    features: item.features.map((feature) => ({
+      icon: featureIcons.includes(feature.icon as FeatureIcon)
+        ? (feature.icon as FeatureIcon)
+        : "chart",
+      label: feature.label,
+    })),
+  };
+}
+
+function toDirections(item: ApiHome["directions"]): DirectionsData {
+  return {
+    label: item.label ?? "",
+    items: item.items.map((card) => ({
+      title: card.title,
+      text: card.text ?? "",
+      href: card.href ?? "#",
+      image: photo(card.photo).src,
+    })),
+  };
+}
+
+/* Карточка «Актуальных объектов»: те же апартаменты, что в списках, короче */
+function toObjects(item: ApiHome["objects"]): ObjectsData {
+  return {
+    eyebrow: item.eyebrow ?? "",
+    title: item.title ?? "",
+    all: { label: item.all.label ?? "", href: item.all.href ?? "#" },
+    more: item.more ?? "",
+    items: item.items.map((card) => ({
+      title: card.name,
+      status: card.status_label,
+      location: location(card.city, card.floor),
+      meta: [card.type, formatArea(card.area), card.floor]
+        .filter(Boolean)
+        .join(" · "),
+      price: formatPrice(card.price),
+      href: paths.apartment(card.slug),
+      image: photo(card.photos.card ?? card.photos.card_mobile).src,
+    })),
+  };
+}
+
+function toHome(item: ApiHome): HomeData {
+  return {
+    /* Пустые поля для поисковиков: остаются общие из app/layout.tsx */
+    meta: {
+      title: item.meta.title ?? undefined,
+      description: item.meta.description ?? undefined,
+    },
+    hero: toHero(item.hero),
+    scenarios: item.scenarios.map(toScenario),
+    about: toAbout(item.about),
+    directions: toDirections(item.directions),
+    objects: toObjects(item.objects),
+    consultation: {
+      eyebrow: item.consultation.eyebrow ?? consultationDefaults.eyebrow,
+      title: item.consultation.title ?? consultationDefaults.title,
+      text: item.consultation.text ?? consultationDefaults.text,
+      button: {
+        label:
+          item.consultation.button_label ?? consultationDefaults.button.label,
+        href: consultationDefaults.button.href,
+      },
+      image: item.consultation.photo?.url ?? consultationDefaults.image,
     },
   };
 }

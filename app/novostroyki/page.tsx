@@ -4,25 +4,30 @@ import { CatalogPage } from "@/components/catalog/CatalogPage";
 import { StatusTabs } from "@/components/catalog/StatusTabs";
 import { Consultation } from "@/components/home/Consultation";
 import { newBuilds } from "@/content/newbuilds";
-import { getApartmentCards } from "@/lib/api";
+import { getApartmentCards, getPage } from "@/lib/api";
 
 /* Данные из бэкенда при каждом запросе, без сборки заранее */
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = newBuilds.meta;
+export async function generateMetadata(): Promise<Metadata> {
+  return (await getPage("newbuilds")).meta;
+}
 
 /*
- * «Новостройки в Сербии»: карточки из бэкенда при каждом запросе, вкладки
- * «Все», «Строится», «Готово» отбирают их по стадии, заданной в админке.
+ * «Новостройки в Сербии»: тексты и карточки из бэкенда при каждом запросе,
+ * вкладки «Все», «Строится», «Готово» отбирают их по стадии, заданной в админке.
  */
 export default async function NewBuildsPage() {
-  const cards = await getApartmentCards("newbuilds");
+  const [page, cards] = await Promise.all([
+    getPage("newbuilds"),
+    getApartmentCards("newbuilds"),
+  ]);
   const byTab = (key: string) =>
     key === "all" ? cards : cards.filter((card) => card.status.tone === key);
 
   return (
     <CatalogPage
-      intro={newBuilds.intro}
+      intro={{ crumbs: newBuilds.crumbs, title: page.title, lead: page.lead }}
       introVariant="dark"
       list={
         <StatusTabs
@@ -48,7 +53,8 @@ export default async function NewBuildsPage() {
       floating
     >
       <Consultation
-        title={newBuilds.consultation.title}
+        title={page.consultation.title}
+        titleMobile={page.consultation.titleMobile}
         mobileImage={newBuilds.consultation.image}
         mobileSize="large"
         desktopImage={newBuilds.consultation.image}

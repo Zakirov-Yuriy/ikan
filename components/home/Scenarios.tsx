@@ -1,10 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowIcon } from "@/components/ui/icons";
-import { scenarios } from "@/content/home";
+import type { ScenarioData } from "@/content/home";
 
-/* Пять направлений: текст слева, фотография справа. На телефоне фотография сверху. */
-export function Scenarios() {
+/*
+ * Строки направлений: текст слева, фотография справа. На телефоне фотография
+ * сверху. Строки, их порядок и фотографии задаются в админке.
+ */
+export function Scenarios({ scenarios }: { scenarios: ScenarioData[] }) {
   /*
    * overflow-x-clip: при наведении строка чуть увеличивается и выходит за края
    * окна; без обрезки появилась бы горизонтальная прокрутка. Тень сверху и
@@ -19,7 +22,7 @@ export function Scenarios() {
       <ol>
         {scenarios.map((item, index) => (
           <li
-            key={item.title}
+            key={index}
             className="group/row scenario-row relative border-b border-line bg-white transition-[translate,scale,box-shadow] duration-300 ease-out motion-reduce:transition-none md:grid md:min-h-[229px] md:grid-cols-[minmax(0,1fr)_300px] lg:hover:z-10 lg:hover:-translate-y-[6px] lg:hover:scale-[1.012] lg:hover:shadow-[0_18px_40px_rgba(8,34,52,0.14)]"
           >
             {/*

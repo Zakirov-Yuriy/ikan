@@ -1,9 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowIcon, PinIcon } from "@/components/ui/icons";
-import { objects } from "@/content/home";
+import type { ObjectsData } from "@/content/home";
 
-export function Objects() {
+/*
+ * «Актуальные объекты»: апартаменты с галочкой «На главной» в админке,
+ * карточка берёт фото, цену и описание апартамента.
+ */
+export function Objects({ objects }: { objects: ObjectsData }) {
   return (
     <section id="objects" className="bg-paper pt-[30px] lg:pt-[99px]">
       <div className="shell">
@@ -26,7 +30,7 @@ export function Objects() {
         <ul className="mt-[37px] grid gap-[15px] md:grid-cols-2 md:gap-[10px] lg:mt-[36px] lg:grid-cols-3">
           {objects.items.map((item) => (
             <li
-              key={item.title}
+              key={item.href}
               className="overflow-hidden rounded-[16px] border border-[#e9eeed] bg-white"
             >
               <div className="relative aspect-[374/220] overflow-hidden md:aspect-[334/220] rounded-t-[15px] bg-line">
