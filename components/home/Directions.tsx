@@ -20,8 +20,11 @@ export function Directions({ directions }: { directions: DirectionsData }) {
                   На компьютере карточка под курсором «выдвигается вперёд»:
                   увеличивается, приподнимается и получает тень. Увеличение
                   фотографии и белый кружок при наведении остались.
+                  Тёмного фона у карточки нет (Анна, 16.10): он проступал
+                  тонкой тёмной линией по скруглённым углам, а при наведении
+                  по всему краю. Текст читается за счёт затемнения поверх фото.
                 */
-                className="group relative flex h-[121px] items-center overflow-hidden rounded-[20px] bg-navy text-white transition-[translate,scale,box-shadow] duration-300 ease-out motion-reduce:transition-none lg:h-[324px] lg:items-end lg:hover:z-10 lg:hover:-translate-y-[6px] lg:hover:scale-[1.03] lg:hover:shadow-[0_18px_40px_rgba(8,34,52,0.28)]"
+                className="group relative flex h-[121px] items-center overflow-hidden rounded-[20px] text-white transition-[translate,scale,box-shadow] duration-300 ease-out motion-reduce:transition-none lg:h-[324px] lg:items-end lg:hover:z-10 lg:hover:-translate-y-[6px] lg:hover:scale-[1.03] lg:hover:shadow-[0_18px_40px_rgba(8,34,52,0.28)]"
               >
                 <Image
                   src={item.image}
