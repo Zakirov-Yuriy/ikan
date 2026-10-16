@@ -4,8 +4,9 @@ import { ArrowIcon, PinIcon } from "@/components/ui/icons";
 import type { ObjectsData } from "@/content/home";
 
 /*
- * «Актуальные объекты»: апартаменты с галочкой «На главной» в админке,
- * карточка берёт фото, цену и описание апартамента.
+ * «Актуальные объекты»: до трёх апартаментов с галочкой «На главной» в
+ * админке (без галочек первые три из списка), карточка берёт фото, цену и
+ * описание апартамента. Карточка нажимается целиком.
  */
 export function Objects({ objects }: { objects: ObjectsData }) {
   return (
@@ -31,8 +32,14 @@ export function Objects({ objects }: { objects: ObjectsData }) {
           {objects.items.map((item) => (
             <li
               key={item.href}
-              className="overflow-hidden rounded-[16px] border border-[#e9eeed] bg-white"
+              className="relative overflow-hidden rounded-[16px] border border-[#e9eeed] bg-white"
             >
+              {/*
+                Нажатие в любом месте карточки открывает апартамент (Анна, 16.10):
+                прозрачная ссылка поверх карточки. Для клавиатуры и программ чтения
+                с экрана она скрыта, у них остаётся «Подробнее», она поверх неё.
+              */}
+              <Link href={item.href} tabIndex={-1} aria-hidden className="absolute inset-0 z-[1]" />
               <div className="relative aspect-[374/220] overflow-hidden md:aspect-[334/220] rounded-t-[15px] bg-line">
                 <Image
                   src={item.image}
@@ -64,7 +71,7 @@ export function Objects({ objects }: { objects: ObjectsData }) {
                 </p>
                 <Link
                   href={item.href}
-                  className="mt-[20.5px] inline-flex items-center gap-[12px] text-[13px] leading-[19.5px] font-semibold text-navy transition-colors hover:text-accent"
+                  className="relative z-[2] mt-[20.5px] inline-flex items-center gap-[12px] text-[13px] leading-[19.5px] font-semibold text-navy transition-colors hover:text-accent"
                 >
                   {objects.more}
                   <ArrowIcon className="size-4" />
