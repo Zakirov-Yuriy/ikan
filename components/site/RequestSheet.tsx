@@ -55,7 +55,7 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const desktop = useDesktop();
   /* Телефон из админки для подсказки «позвоните нам» после ошибки */
-  const { phone } = useSiteSettings();
+  const { phones } = useSiteSettings();
 
   /* Заявка уходит на сервер сайта (lib/request.ts), дальше в бэкенд и админку */
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -275,9 +275,14 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
         {status.kind === "failed" && (
           <p role="alert" className="mt-3 pb-1 text-[12px] leading-[18px] text-muted">
             {requestStatus.failed} {status.message} {requestStatus.retry}{" "}
-            <a href={phone.href} className="whitespace-nowrap text-accent">
-              {phone.label}
-            </a>
+            {phones.map((item, i) => (
+              <span key={item.href}>
+                {i > 0 && ", "}
+                <a href={item.href} className="whitespace-nowrap text-accent">
+                  {item.label}
+                </a>
+              </span>
+            ))}
           </p>
         )}
       </form>

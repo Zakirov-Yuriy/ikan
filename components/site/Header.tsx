@@ -7,9 +7,12 @@ import { AnchorLink } from "./AnchorLink";
 import { MobileMenu } from "./MobileMenu";
 import { RequestLink } from "./RequestPopup";
 
-/* Шапка. Телефон из админки («Настройки»), один на весь сайт */
+/*
+ * Шапка. Телефоны из админки («Настройки»): на компьютере оба столбиком
+ * (16.10), меню телефона звонит на главный.
+ */
 export async function Header() {
-  const { phone } = await getSettings();
+  const { phone, phones } = await getSettings();
 
   return (
     <header className="relative z-40 border-b border-[#eceeef] bg-white">
@@ -46,13 +49,16 @@ export async function Header() {
         </nav>
 
         <div className="hidden shrink-0 items-center gap-[15px] lg:flex">
-          <a
-            href={phone.href}
-            className="flex items-center gap-[7px] text-[13px] leading-5 transition-colors hover:text-accent"
-          >
-            <PhoneIcon className="size-[15px] text-ink" />
-            {phone.label}
-          </a>
+          <div className="flex items-center gap-[7px] text-[13px] leading-5">
+            <PhoneIcon className="size-[15px] shrink-0 text-ink" />
+            <div className="flex flex-col">
+              {phones.map((item) => (
+                <a key={item.href} href={item.href} className="whitespace-nowrap transition-colors hover:text-accent">
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </div>
           {/* Открывает окно заявки */}
           <RequestLink
             href={site.callbackHref}

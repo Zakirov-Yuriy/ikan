@@ -21,8 +21,14 @@ export const requestStatus = {
 /* Телефон как он написан на сайте и как ссылка «позвонить» */
 export type SitePhone = { label: string; href: string };
 
-/* Общие настройки из админки */
-export type SiteSettings = { phone: SitePhone };
+/* Ссылки иконок подвала из админки, null: иконку не показывать */
+export type SiteSocials = { max: string | null; telegram: string | null; vk: string | null };
+
+/*
+ * Общие настройки из админки. phone: главный телефон, на него звонят кнопки
+ * «Позвонить». phones: все телефоны для текста (главный и второй, 16.10).
+ */
+export type SiteSettings = { phone: SitePhone; phones: SitePhone[]; socials: SiteSocials };
 
 export const site = {
   name: "ИКАН",
@@ -31,6 +37,16 @@ export const site = {
     label: "+7 (991) 255-29-00",
     href: "tel:+79912552900",
   } satisfies SitePhone,
+  /* Запасные значения, такие же, как по умолчанию в бэкенде */
+  phones: [
+    { label: "+7 (991) 255-29-00", href: "tel:+79912552900" },
+    { label: "+7 (991) 587-24-57", href: "tel:+79915872457" },
+  ] satisfies SitePhone[],
+  socials: {
+    max: "https://max.ru/u/f9LHodD0cOKw4NzKJl7VwikboHE9YRgKRd8GrqCCE2A1VsGgQ56KcSluPHc",
+    telegram: "https://t.me/ikan_serbia",
+    vk: "https://vk.ru/probizvip",
+  } satisfies SiteSocials,
   /*
    * Форма «Заказать обратный звонок» в подвале. К ней прокручивают почти все
    * кнопки заявки; у трёх кнопок с окном заявки это запасной адрес на
@@ -130,13 +146,13 @@ export const footer = {
    * Иконки соцсетей и мессенджеров, в том порядке, как в макете.
    * Instagram и WhatsApp убраны 14.10 по просьбе Анны, их файлы остались
    * в public/images/social на случай возврата.
-   * Адресов пока нет: когда появятся, вписать их вместо SOON.
+   * Ссылки с 16.10 из админки («Настройки»), по ключу key.
    */
   socials: [
-    { label: "MAX", icon: "/images/social/max.svg", href: SOON },
-    { label: "Telegram", icon: "/images/social/telegram.svg", href: SOON },
-    { label: "ВКонтакте", icon: "/images/social/vk.svg", href: SOON },
-  ],
+    { key: "max", label: "MAX", icon: "/images/social/max.svg" },
+    { key: "telegram", label: "Telegram", icon: "/images/social/telegram.svg" },
+    { key: "vk", label: "ВКонтакте", icon: "/images/social/vk.svg" },
+  ] as const,
   /* Пункты «Недвижимость» с 15.10 ведут туда же, куда меню в шапке (Анна, 15.10) */
   columns: [
     {

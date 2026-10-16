@@ -4,11 +4,15 @@ import { createContext, useContext, type ReactNode } from "react";
 import { site, type SiteSettings } from "@/content/site";
 
 /*
- * Общие настройки из админки (телефон) для частей сайта, которые работают в
+ * Общие настройки из админки (телефоны, ссылки соцсетей) для частей сайта, которые работают в
  * браузере: полоса внизу на телефоне, закреплённые кнопки, тексты форм.
  * Значение задаёт app/layout.tsx, получив его из бэкенда один раз на запрос.
  */
-const SiteSettingsContext = createContext<SiteSettings>({ phone: site.phone });
+const SiteSettingsContext = createContext<SiteSettings>({
+  phone: site.phone,
+  phones: site.phones,
+  socials: site.socials,
+});
 
 export function SiteSettingsProvider({
   value,

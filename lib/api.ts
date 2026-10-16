@@ -16,7 +16,7 @@ import type {
 import { consultation as consultationDefaults } from "@/content/home";
 import { paths } from "@/content/paths";
 import { restaurantPage } from "@/content/restaurant";
-import { site, type SitePhone, type SiteSettings } from "@/content/site";
+import { site, type SiteSettings } from "@/content/site";
 
 /*
  * Данные с бэкенда (backend-ikan, Laravel). Адрес в .env.local:
@@ -249,8 +249,14 @@ export async function getRestaurant(): Promise<RestaurantData | null> {
  * (cache из React): к бэкенду уходит один вызов, а не три.
  */
 export const getSettings = cache(async (): Promise<SiteSettings> => {
-  const item = await api<{ phone: SitePhone }>("/site");
-  return { phone: item?.phone ?? site.phone };
+  const item = await api<Partial<SiteSettings>>("/site");
+  const phone = item?.phone ?? site.phone;
+  return {
+    phone,
+    /* Старый бэкенд без phones: один главный телефон */
+    phones: item?.phones?.length ? item.phones : item ? [phone] : site.phones,
+    socials: item?.socials ?? site.socials,
+  };
 });
 
 /*

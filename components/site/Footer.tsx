@@ -1,17 +1,17 @@
 import Image from "next/image";
-import { footer, site } from "@/content/site";
+import { footer, site, type SiteSocials } from "@/content/site";
 import { getSettings } from "@/lib/api";
 import { AnchorLink } from "./AnchorLink";
 import { CallbackForm } from "./CallbackForm";
 
 /*
- * Подвал. Телефон из админки («Настройки»), один на весь сайт.
+ * Подвал. Телефоны и ссылки иконок из админки («Настройки»).
  * formDesktopOnly: форма «Заказать обратный звонок» только на компьютере.
  * Так на странице инвестиций: в её макете для телефона формы в подвале нет
  * (Анна, 15.10). Кнопки заявки там открывают окно заявки (RequestPopup).
  */
 export async function Footer({ formDesktopOnly = false }: { formDesktopOnly?: boolean }) {
-  const { phone } = await getSettings();
+  const { phones, socials } = await getSettings();
 
   return (
     <footer className="bg-navy text-navy-text">
@@ -42,13 +42,18 @@ export async function Footer({ formDesktopOnly = false }: { formDesktopOnly?: bo
               ))}
             </p>
             {/* На телефоне и планшете иконки стоят здесь, между адресом и телефоном */}
-            <Socials className="mt-[19px] gap-5 lg:hidden" />
-            <a
-              href={phone.href}
-              className="mt-5 block w-fit font-display text-[17px] leading-[23px] font-medium text-white transition-colors hover:text-sky lg:mt-[13px]"
-            >
-              {phone.label}
-            </a>
+            <Socials urls={socials} className="mt-[19px] gap-5 lg:hidden" />
+            <div className="mt-5 lg:mt-[13px]">
+              {phones.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="block w-fit font-display text-[17px] leading-[23px] font-medium text-white transition-colors hover:text-sky"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
           </div>
 
           <FooterColumn column={footer.columns[0]} />
@@ -64,14 +69,21 @@ export async function Footer({ formDesktopOnly = false }: { formDesktopOnly?: bo
         </div>
 
         {/* На компьютере иконки стоят под колонками, над линией */}
-        <Socials className="mt-[50px] hidden gap-[14px] lg:flex" />
+        <Socials urls={socials} className="mt-[50px] hidden gap-[14px] lg:flex" />
 
         <div className="mt-[24px] border-t border-[#313c44] pt-[30px] text-[12px] leading-[21px] max-lg:-mx-1 lg:-mx-[5.5px] lg:mt-[23px] lg:pt-[30px]">
           {footer.legal.map((line) => (
             <p key={line}>{line}</p>
           ))}
           <p>
-            {footer.contacts.label} {footer.contacts.email} · {phone.label}
+            {footer.contacts.label} {footer.contacts.email}
+            {/* Номер целиком на одной строке, не разрывается на телефоне */}
+            {phones.map((item) => (
+              <span key={item.href}>
+                {" · "}
+                <span className="whitespace-nowrap">{item.label}</span>
+              </span>
+            ))}
           </p>
         </div>
       </div>
@@ -79,19 +91,23 @@ export async function Footer({ formDesktopOnly = false }: { formDesktopOnly?: bo
   );
 }
 
-/* Ряд иконок соцсетей и мессенджеров. Файлы иконок взяты из макета без изменений */
-function Socials({ className = "" }: { className?: string }) {
+/*
+ * Ряд иконок соцсетей и мессенджеров. Файлы иконок взяты из макета без изменений.
+ * Ссылки из админки, открываются в новой вкладке; иконка без ссылки не показывается.
+ */
+function Socials({ urls, className = "" }: { urls: SiteSocials; className?: string }) {
+  const items = footer.socials.filter((item) => urls[item.key]);
+  if (items.length === 0) return null;
   return (
     <ul className={`flex ${className}`}>
-      {footer.socials.map((item) => {
-        const external = item.href.startsWith("http");
+      {items.map((item) => {
         return (
           <li key={item.label}>
             <a
-              href={item.href}
+              href={urls[item.key] ?? undefined}
               aria-label={item.label}
-              target={external ? "_blank" : undefined}
-              rel={external ? "noopener noreferrer" : undefined}
+              target="_blank"
+              rel="noopener noreferrer"
               className="block transition-opacity hover:opacity-80"
             >
               <Image src={item.icon} alt="" width={24} height={24} unoptimized />
