@@ -48,10 +48,21 @@ export function ApartmentCard({ card, columns, eager = false }: Props) {
 
   return (
     <article
-      className={`overflow-hidden rounded-[14px] border border-[#ebefef] bg-white lg:rounded-[20px] lg:border-[#dfe5e5] ${
+      className={`relative overflow-hidden rounded-[14px] border border-[#ebefef] bg-white lg:rounded-[20px] lg:border-[#dfe5e5] ${
         card.onlyMobile ? "lg:hidden" : ""
       }`}
     >
+      {/*
+        Нажатие в любом месте карточки открывает апартамент (правка Саши 16.10):
+        прозрачная ссылка поверх всей карточки. Для клавиатуры и программ
+        чтения с экрана она скрыта, у них остаются обычные ссылки, они поверх неё.
+      */}
+      <Link
+        href={card.href}
+        tabIndex={-1}
+        aria-hidden
+        className="absolute inset-0 z-[1]"
+      />
       <header className="relative flex min-h-[75px] items-start justify-between pt-[15.5px] pr-[14px] pb-[15.5px] pl-[14px] lg:h-[96px] lg:items-center lg:pb-0 lg:border-b lg:border-[#dfe5e5] lg:pt-0 lg:pr-[31px] lg:pl-[30px]">
         <div>
           <p className="flex items-center gap-[6px] text-[10px] leading-[15px] text-muted lg:text-[11px] lg:leading-[16.5px]">
@@ -127,7 +138,7 @@ export function ApartmentCard({ card, columns, eager = false }: Props) {
               </p>
               <Link
                 href={card.href}
-                className="relative -top-px flex items-center gap-[7px] text-[12px] leading-[18px] font-semibold text-accent transition-colors hover:text-navy"
+                className="relative -top-px z-[2] flex items-center gap-[7px] text-[12px] leading-[18px] font-semibold text-accent transition-colors hover:text-navy"
               >
                 {card.more}
                 <ArrowIcon className="size-3" />
@@ -151,7 +162,7 @@ export function ApartmentCard({ card, columns, eager = false }: Props) {
               </p>
               <Link
                 href={card.href}
-                className="relative -top-px mr-[11px] flex items-center gap-[7px] text-[12px] leading-[18px] font-semibold text-accent"
+                className="relative -top-px z-[2] mr-[11px] flex items-center gap-[7px] text-[12px] leading-[18px] font-semibold text-accent"
               >
                 {card.more}
                 <ArrowIcon className="relative top-px size-[11.5px]" />
@@ -161,7 +172,7 @@ export function ApartmentCard({ card, columns, eager = false }: Props) {
 
           <Link
             href={card.href}
-            className="mt-[14px] flex h-12 items-center justify-center gap-[13px] rounded-[10px] bg-navy px-2 text-[16px] leading-6 font-medium text-white transition-colors hover:bg-ink lg:mt-[22.5px] lg:inline-flex lg:px-[15px]"
+            className="relative z-[2] mt-[14px] flex h-12 items-center justify-center gap-[13px] rounded-[10px] bg-navy px-2 text-[16px] leading-6 font-medium text-white transition-colors hover:bg-ink lg:mt-[22.5px] lg:inline-flex lg:px-[15px]"
           >
             <span className="lg:hidden">{card.button.mobile}</span>
             <span className="hidden lg:inline">{card.button.desktop}</span>

@@ -26,15 +26,33 @@ export function Scenarios({ scenarios }: { scenarios: ScenarioData[] }) {
             className="group/row scenario-row relative border-b border-line bg-white transition-[translate,scale,box-shadow] duration-300 ease-out motion-reduce:transition-none md:grid md:min-h-[229px] md:grid-cols-[minmax(0,1fr)_300px] lg:hover:z-10 lg:hover:-translate-y-[6px] lg:hover:scale-[1.012] lg:hover:shadow-[0_18px_40px_rgba(8,34,52,0.14)]"
           >
             {/*
+              На компьютере нажатие в любом месте строки ведёт туда же, куда её
+              ссылка (правка Саши 16.10): прозрачная ссылка поверх всей строки.
+              Для клавиатуры и программ чтения с экрана она скрыта, у них
+              остаётся обычная ссылка строки, она стоит поверх этой.
+            */}
+            <Link
+              href={item.link.href}
+              tabIndex={-1}
+              aria-hidden
+              className="absolute inset-0 z-[1] hidden lg:block"
+            />
+            {/*
               Фотография. На компьютере она в покое на 42 px шире своей колонки и
-              выступает влево. При наведении на ссылку строки, при нажатии и при
+              выступает влево. При наведении на кнопку-ссылку строки (data-cta), при нажатии и при
               выборе с клавиатуры фотография уезжает на эти 42 px вправо, её правый
               край обрезается правым краем кадра строки (.scenario-row в
               globals.css): до ширины макета это край окна, как в макете.
             */}
-            <div className="relative aspect-[402/228] md:order-2 md:aspect-auto">
+            {/* На телефоне и планшете нажатие на фотографию ведёт туда же, куда ссылка строки */}
+            <Link
+              href={item.link.href}
+              tabIndex={-1}
+              aria-hidden
+              className="relative block aspect-[402/228] md:order-2 md:aspect-auto"
+            >
               <div className="absolute inset-y-0 right-0 left-0 overflow-hidden lg:-left-[42px]">
-                <div className="relative h-full bg-navy transition-transform duration-300 ease-out motion-reduce:transition-none lg:group-has-[a:hover]/row:translate-x-[42px] lg:group-has-[a:focus-visible]/row:translate-x-[42px] lg:group-has-[a:active]/row:translate-x-[42px]">
+                <div className="relative h-full bg-navy transition-transform duration-300 ease-out motion-reduce:transition-none lg:group-has-[[data-cta]:hover]/row:translate-x-[42px] lg:group-has-[[data-cta]:focus-visible]/row:translate-x-[42px] lg:group-has-[[data-cta]:active]/row:translate-x-[42px]">
                   <Image
                     src={item.image.src}
                     alt={item.image.alt}
@@ -53,7 +71,7 @@ export function Scenarios({ scenarios }: { scenarios: ScenarioData[] }) {
                   )}
                 </div>
               </div>
-            </div>
+            </Link>
             <div className="scenario-text pt-[21px] pr-[14px] pb-[9px] md:order-1 md:pt-[40px] md:pr-8 md:pb-[29px]">
               <p className="font-display text-[11px] leading-[15px] font-bold tracking-[0.16em] text-sky-soft">
                 {String(index + 1).padStart(2, "0")}
@@ -72,7 +90,8 @@ export function Scenarios({ scenarios }: { scenarios: ScenarioData[] }) {
               */}
               <Link
                 href={item.link.href}
-                className="group mt-2 inline-flex rounded-[10px] px-[10px] pt-[9px] pb-[10px] font-display text-[13px] leading-[18px] font-semibold text-accent transition-colors duration-200 hover:bg-navy hover:text-white focus-visible:bg-navy focus-visible:text-white active:bg-navy active:text-white md:mt-[7px]"
+                data-cta
+                className="group relative z-[2] mt-2 inline-flex rounded-[10px] px-[10px] pt-[9px] pb-[10px] font-display text-[13px] leading-[18px] font-semibold text-accent transition-colors duration-200 hover:bg-navy hover:text-white focus-visible:bg-navy focus-visible:text-white active:bg-navy active:text-white md:mt-[7px]"
               >
                 <span className="inline-flex -translate-x-[10px] items-center gap-[10px] transition-transform duration-200 group-hover:translate-x-0 group-focus-visible:translate-x-0 group-active:translate-x-0">
                   {item.link.label}

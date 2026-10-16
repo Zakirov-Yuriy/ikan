@@ -18,7 +18,10 @@ const allLink =
   "absolute flex h-[39px] items-center rounded-[8px] bg-white px-[13.5px] text-[12px] leading-[18px] font-semibold text-ink transition-colors hover:text-accent";
 
 /*
- * Фотографии объекта.
+ * Фотографии объекта. Нажатие на любую фотографию открывает страницу всех
+ * фотографий, как кнопка «Все N фото» (правка Саши 16.10): поверх каждой
+ * лежит прозрачная ссылка, скрытая для клавиатуры, кнопка остаётся сверху.
+ *
  * На телефоне в макете одна фотография во всю ширину.
  * На компьютере две большие сверху в общей рамке и две маленькие снизу,
  * кадрирование как в макете: левая большая прижата к левому краю, правая к правому.
@@ -54,6 +57,12 @@ export function Gallery({
         />
         <Link
           href={all.href}
+          tabIndex={-1}
+          aria-hidden
+          className="absolute inset-0"
+        />
+        <Link
+          href={all.href}
           className={`${allLink} right-[8px] bottom-[13px]`}
         >
           {all.label}
@@ -72,6 +81,12 @@ export function Gallery({
               sizes="(min-width: 1024px) 390px, 1px"
               className="object-cover object-left"
             />
+            <Link
+              href={all.href}
+              tabIndex={-1}
+              aria-hidden
+              className="absolute inset-0"
+            />
           </div>
           <div className="relative">
             <Image
@@ -80,6 +95,12 @@ export function Gallery({
               fill
               sizes="(min-width: 1024px) 283px, 1px"
               className="object-cover object-right"
+            />
+            <Link
+              href={all.href}
+              tabIndex={-1}
+              aria-hidden
+              className="absolute inset-0"
             />
           </div>
         </div>
@@ -93,6 +114,12 @@ export function Gallery({
               sizes="(min-width: 1024px) 336px, 1px"
               className={smallPhoto}
             />
+            <Link
+              href={all.href}
+              tabIndex={-1}
+              aria-hidden
+              className="absolute inset-0"
+            />
           </div>
           <div className={small}>
             <Image
@@ -101,6 +128,12 @@ export function Gallery({
               fill
               sizes="(min-width: 1024px) 336px, 1px"
               className={smallPhoto}
+            />
+            <Link
+              href={all.href}
+              tabIndex={-1}
+              aria-hidden
+              className="absolute inset-0"
             />
             <Link href={all.href} className={`${allLink} ${allSpot}`}>
               {all.label}
