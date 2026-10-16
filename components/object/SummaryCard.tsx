@@ -33,6 +33,7 @@ const looks = {
     stats:
       "mt-[23.4px] grid grid-cols-[36.74%_36.74%_minmax(0,1fr)] border-y pt-[18.5px] pb-[17px] lg:mt-[22.5px] lg:grid-cols-3 lg:pt-[19.5px] lg:pb-[17.4px]",
     stat: "",
+    statFirst: "",
     statLabel: "mt-[6px] lg:mt-[4px]",
     /* Цена и кнопки: только на компьютере */
     bottom: "hidden lg:block",
@@ -47,10 +48,18 @@ const looks = {
     location: "mt-[16px] lg:mt-[14.5px]",
     title: "mt-[9px] max-lg:text-[30px] max-lg:tracking-[-0.04em] lg:mt-[11px]",
     text: "mt-[15px] lg:mt-[13px]",
+    /*
+     * На компьютере (Анна, 16.10: «Однокомнатный» в равных колонках наезжал
+     * на площадь): тип слева, площадь и этаж вместе справа, каждое по ширине
+     * своего текста. Если в одну строку не помещается, площадь и этаж целиком
+     * уходят на вторую строку под тип. Слова не разрываются.
+     */
     stats:
-      "mt-[17px] border-y pt-[9px] pb-[9.5px] max-lg:border-[#ebefef] lg:mt-[22.5px] lg:grid lg:grid-cols-3 lg:pt-[19.5px] lg:pb-[17.4px]",
+      "mt-[17px] border-y pt-[9px] pb-[9.5px] max-lg:border-[#ebefef] lg:mt-[22.5px] lg:flex lg:flex-wrap lg:items-start lg:justify-between lg:gap-x-4 lg:gap-y-[14px] lg:pt-[19.5px] lg:pb-[17.4px]",
     /* Третья строка в макете стоит на 1 px ниже первых двух */
     stat: "border-[#ebefef] pt-[4.5px] pb-[3.5px] max-lg:not-first:border-t max-lg:last:pt-[5.5px] max-lg:last:pb-[2.2px] lg:p-0",
+    /* Тип стоит в своём списке один, ему отступы первой строки без правил «последней» */
+    statFirst: "border-[#ebefef] pt-[4.5px] pb-[3.5px] lg:p-0",
     statLabel: "mt-[5.5px] lg:mt-[4px]",
     bottom: "",
     priceLabel: "mt-[17.5px] lg:mt-[22px]",
@@ -99,20 +108,43 @@ export function SummaryCard({
         )}
       </p>
 
-      <dl className={`border-[#dfe5e5] ${look.stats}`}>
-        {summary.stats.map((stat) => (
-          <div key={stat.label} className={`flex flex-col ${look.stat}`}>
-            <dt
-              className={`order-2 text-[9px] leading-[13.5px] text-muted ${look.statLabel}`}
-            >
-              {stat.label}
-            </dt>
-            <dd className="order-1 text-[14px] leading-[19.6px] font-bold text-ink">
-              {stat.value}
-            </dd>
-          </div>
-        ))}
-      </dl>
+      {variant === "apartment" ? (
+        /* Два списка: тип отдельно, площадь и этаж вместе, чтобы переносились парой */
+        <div className={`border-[#dfe5e5] ${look.stats}`}>
+          <dl className="min-w-0">
+            {summary.stats.slice(0, 1).map((stat) => (
+              <Stat
+                key={stat.label}
+                stat={stat}
+                className={look.statFirst}
+                label={look.statLabel}
+                wrap
+              />
+            ))}
+          </dl>
+          <dl className="lg:flex lg:gap-x-4">
+            {summary.stats.slice(1).map((stat) => (
+              <Stat
+                key={stat.label}
+                stat={stat}
+                className={`max-lg:border-t ${look.stat}`}
+                label={look.statLabel}
+              />
+            ))}
+          </dl>
+        </div>
+      ) : (
+        <dl className={`border-[#dfe5e5] ${look.stats}`}>
+          {summary.stats.map((stat) => (
+            <Stat
+              key={stat.label}
+              stat={stat}
+              className={look.stat}
+              label={look.statLabel}
+            />
+          ))}
+        </dl>
+      )}
 
       <div className={look.bottom}>
         <p
@@ -139,5 +171,36 @@ export function SummaryCard({
         </a>
       </div>
     </aside>
+  );
+}
+
+/*
+ * Одна цифра карточки: значение и подпись под ним. wrap: длинный тип может
+ * переноситься по словам, остальные значения на компьютере в одну строку.
+ */
+function Stat({
+  stat,
+  className,
+  label,
+  wrap = false,
+}: {
+  stat: { value: string; label: string };
+  className: string;
+  label: string;
+  wrap?: boolean;
+}) {
+  return (
+    <div className={`flex flex-col ${className}`}>
+      <dt className={`order-2 text-[9px] leading-[13.5px] text-muted ${label}`}>
+        {stat.label}
+      </dt>
+      <dd
+        className={`order-1 text-[14px] leading-[19.6px] font-bold text-ink ${
+          wrap ? "[overflow-wrap:break-word]" : "lg:whitespace-nowrap"
+        }`}
+      >
+        {stat.value}
+      </dd>
+    </div>
   );
 }
