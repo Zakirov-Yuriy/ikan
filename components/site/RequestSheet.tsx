@@ -3,6 +3,7 @@
 import { useId, useState, type FormEvent } from "react";
 import { ArrowIcon } from "@/components/ui/icons";
 import { requestStatus } from "@/content/site";
+import { phonePrefix } from "@/lib/phone-prefix";
 import { sendRequest } from "@/lib/request";
 import { Consents } from "./Consents";
 import { Modal, useDesktop } from "./Modal";
@@ -160,6 +161,7 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
             desktop ? form.phone.placeholderDesktop : form.phone.placeholder
           }
           className={`${field} ${look.input}`}
+          {...phonePrefix}
         />
 
         <label htmlFor={interestId} className={`${label} ${look.labelGap}`}>

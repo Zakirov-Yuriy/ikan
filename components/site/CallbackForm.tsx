@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { ArrowIcon } from "@/components/ui/icons";
 import { requestStatus } from "@/content/site";
+import { phonePrefix } from "@/lib/phone-prefix";
 import { sendRequest } from "@/lib/request";
 import { Consents } from "./Consents";
 import { useRequestSent } from "./RequestSent";
@@ -89,6 +90,7 @@ export function CallbackForm({ form }: Props) {
           placeholder={form.phonePlaceholder}
           aria-label="Телефон"
           className={field}
+          {...phonePrefix}
         />
       </div>
 

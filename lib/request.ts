@@ -2,6 +2,8 @@
  * Отправка заявки с формы сайта на свой адрес /api/request (дальше её
  * передаёт сервер сайта). Возвращает текст ошибки или null, если принято.
  */
+import { isOnlyPrefix } from "./phone-prefix";
+
 export type RequestSource = "callback" | "popup";
 
 export async function sendRequest(
@@ -11,7 +13,10 @@ export async function sendRequest(
   const data = new FormData(form);
   const payload = {
     name: String(data.get("name") ?? ""),
-    phone: String(data.get("phone") ?? ""),
+    /* Только «+7» без номера уходит как пустое поле: бэкенд ответит «укажите телефон» */
+    phone: isOnlyPrefix(String(data.get("phone") ?? ""))
+      ? ""
+      : String(data.get("phone") ?? ""),
     interest: String(data.get("interest") ?? ""),
     source,
     page: window.location.pathname,
