@@ -17,6 +17,8 @@ export async function sendRequest(
     page: window.location.pathname,
     consent_terms: data.get("terms") ? true : false,
     consent_privacy: data.get("privacy") ? true : false,
+    /* Согласие на рекламу по желанию (16.10) */
+    consent_ads: data.get("ads") ? true : false,
     /* Поле-ловушка для роботов, у людей оно пустое */
     website: String(data.get("website") ?? ""),
   };

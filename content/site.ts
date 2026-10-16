@@ -4,18 +4,74 @@
  * запасное значение на случай, если бэкенд его не отдал.
  */
 
+import { legalDocumentPath } from "./documents";
 import { paths } from "./paths";
 import { restaurant } from "./restaurant";
 
 /* Страницы, которые ещё не свёрстаны. Адрес появится вместе со страницей. */
 const SOON = "#";
 
+/*
+ * Галочки под формами заявки, тексты Саши от 16.10. name уходит в заявку:
+ * terms (consent_terms), privacy (consent_privacy), ads (consent_ads).
+ * В частях текста ссылки на документы из content/documents.ts по адресу.
+ */
+type ConsentPart = string | { label: string; document: string };
+export const consents: {
+  name: string;
+  required: boolean;
+  parts: ConsentPart[];
+}[] = [
+  {
+    name: "terms",
+    required: true,
+    parts: [
+      "Я принимаю условия ",
+      {
+        label: "Пользовательского соглашения",
+        document: "polzovatelskoe-soglashenie",
+      },
+      " и ",
+      {
+        label: "Политики конфиденциальности",
+        document: "politika-konfidencialnosti",
+      },
+      ".",
+    ],
+  },
+  {
+    name: "privacy",
+    required: true,
+    parts: [
+      "Я даю ",
+      {
+        label: "согласие на обработку моих персональных данных",
+        document: "soglasie-na-obrabotku-personalnyh-dannyh",
+      },
+      ".",
+    ],
+  },
+  {
+    name: "ads",
+    required: false,
+    parts: [
+      "Я согласен на получение ",
+      {
+        label: "рекламных и информационных сообщений",
+        document: "soglasie-na-reklamu",
+      },
+      ".",
+    ],
+  },
+];
+
 /* Сообщения форм заявки после отправки, общие для подвала и окна */
 export const requestStatus = {
   sending: "Отправляем...",
   /* Окно после отправки (16.10): заголовок, текст, кнопка */
   sentTitle: "Заявка отправлена",
-  sentText: "Спасибо! Мы получили вашу заявку и перезвоним вам в ближайшее время.",
+  sentText:
+    "Спасибо! Мы получили вашу заявку и перезвоним вам в ближайшее время.",
   sentButton: "Хорошо",
   failed: "Не получилось отправить заявку.",
   retry: "Попробуйте ещё раз или позвоните нам:",
@@ -25,13 +81,21 @@ export const requestStatus = {
 export type SitePhone = { label: string; href: string };
 
 /* Ссылки иконок подвала из админки, null: иконку не показывать */
-export type SiteSocials = { max: string | null; telegram: string | null; vk: string | null };
+export type SiteSocials = {
+  max: string | null;
+  telegram: string | null;
+  vk: string | null;
+};
 
 /*
  * Общие настройки из админки. phone: главный телефон, на него звонят кнопки
  * «Позвонить». phones: все телефоны для текста (главный и второй, 16.10).
  */
-export type SiteSettings = { phone: SitePhone; phones: SitePhone[]; socials: SiteSocials };
+export type SiteSettings = {
+  phone: SitePhone;
+  phones: SitePhone[];
+  socials: SiteSocials;
+};
 
 export const site = {
   name: "ИКАН",
@@ -89,8 +153,6 @@ export const requestForm = {
     placeholder: "Жильё для себя, для сдачи или инвестиции",
   },
   submit: "Оставить заявку",
-  termsHref: SOON,
-  privacyHref: SOON,
 };
 
 /*
@@ -177,7 +239,12 @@ export const footer = {
     },
     {
       title: "Документы",
-      links: [{ label: "Политика конфиденциальности", href: SOON }],
+      links: [
+        {
+          label: "Политика конфиденциальности",
+          href: legalDocumentPath("politika-konfidencialnosti"),
+        },
+      ],
     },
   ],
   form: {
@@ -186,15 +253,23 @@ export const footer = {
     namePlaceholder: "Ваше имя",
     phonePlaceholder: "+7 000 000 00 00",
     submit: "Отправить",
-    termsHref: SOON,
-    privacyHref: SOON,
   },
   /* Нижние строки подвала, как в макете от 13.10; последняя строка с телефоном из админки */
   legal: [
     "ООО ИКК ИКАН. Все права защищены.",
     "Владелец сайта: ООО ИКК ИКАН",
     "Информация о недвижимости и ценах носит ознакомительный характер. Актуальные условия уточняйте у представителя проекта.",
-    "Политика конфиденциальности · Пользовательское соглашение · Политика обработки персональных данных · Политика использования файлов cookie",
+  ],
+  /* Строка документов под ними ссылками (16.10): пять документов от Саши, про cookie документа нет */
+  documents: [
+    { label: "Политика конфиденциальности", slug: "politika-konfidencialnosti" },
+    { label: "Пользовательское соглашение", slug: "polzovatelskoe-soglashenie" },
+    {
+      label: "Согласие на обработку персональных данных",
+      slug: "soglasie-na-obrabotku-personalnyh-dannyh",
+    },
+    { label: "Согласие на рекламу", slug: "soglasie-na-reklamu" },
+    { label: "Публичная оферта", slug: "oferta" },
   ],
   contacts: { label: "Контакты:", email: "email@ik-ikan.ru" },
 };

@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useId, useState, type FormEvent } from "react";
 import { ArrowIcon } from "@/components/ui/icons";
 import { requestStatus } from "@/content/site";
 import { sendRequest } from "@/lib/request";
+import { Consents } from "./Consents";
 import { Modal, useDesktop } from "./Modal";
 import { RequestSentContent } from "./RequestSent";
 import { useSiteSettings } from "./SiteSettings";
@@ -18,8 +18,6 @@ export type RequestFormTexts = {
   phone: { label: string; placeholder: string; placeholderDesktop: string };
   interest: { label: string; placeholder: string };
   submit: string;
-  termsHref: string;
-  privacyHref: string;
 };
 
 type Status =
@@ -37,10 +35,6 @@ type Props = {
   /* Окно закрылось, его можно убрать со страницы */
   onClosed: () => void;
 };
-
-/* Ссылки на документы в окне на компьютере: голубые, с тонкой линией снизу */
-const skyLink =
-  "border-b border-sky/45 pb-[2px] font-medium text-sky transition-colors hover:border-accent hover:text-accent";
 
 /*
  * Окно «Оставить заявку». Общая основа (затемнение, появление, закрытие,
@@ -178,83 +172,8 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
           className={`${field} resize-none ${look.textarea}`}
         />
 
-        {desktop ? (
-          /* Компьютер: согласия как в форме подвала, только на белом фоне */
-          <div className="mt-[6.5px] grid gap-1 text-[11px] leading-[17.05px] text-[#1e1e1e]">
-            <label className="flex gap-[10px]">
-              <input
-                type="checkbox"
-                name="terms"
-                required
-                className="check-light size-5 rounded-[5px] border-[#d0d0d0]"
-              />
-              <span className="pt-px">
-                Я ознакомился(-ась) с{" "}
-                {/* В макете линия под этой ссылкой на 8 px длиннее текста */}
-                <Link href={form.termsHref} className={`${skyLink} pr-[8px]`}>
-                  Условиями использования сайта
-                </Link>
-              </span>
-            </label>
-            <label className="flex gap-[10px]">
-              <input
-                type="checkbox"
-                name="privacy"
-                required
-                className="check-light size-5 rounded-[5px] border-[#d0d0d0]"
-              />
-              <span>
-                Я ознакомился(-ась) с{" "}
-                {/* В макете эта ссылка стоит на 3 px правее первой */}
-                <Link href={form.privacyHref} className={`${skyLink} ml-[3px]`}>
-                  Политикой конфиденциальности
-                </Link>{" "}
-                <span className="mt-px block max-w-[240px]">
-                  и даю согласие на обработку персональных данных в соответствии
-                  с её условиями.
-                </span>
-              </span>
-            </label>
-          </div>
-        ) : (
-          <div className="mt-[11.5px] grid gap-[13px] text-[10px] text-muted">
-            <label className="flex gap-[10px]">
-              <input
-                type="checkbox"
-                name="privacy"
-                required
-                className="check-light"
-              />
-              <span>
-                <span className="block leading-[13px]">
-                  Я ознакомился(-ась) с{" "}
-                  <Link href={form.privacyHref} className="consent-link-light">
-                    Политикой конфиденциальности
-                  </Link>
-                </span>
-                <span className="-mt-px block leading-4">
-                  и даю согласие на обработку персональных данных в соответствии
-                  с её условиями.
-                </span>
-              </span>
-            </label>
-            <label className="flex gap-[10px]">
-              <input
-                type="checkbox"
-                name="terms"
-                required
-                className="check-light"
-              />
-              <span className="leading-[13px]">
-                Я ознакомился(-ась) с{" "}
-                <Link href={form.termsHref} className="consent-link-light">
-                  Условиями использования сайта
-                </Link>
-                .
-              </span>
-            </label>
-          </div>
-        )}
+        {/* Три галочки: соглашение и политика, персональные данные, реклама (Саша, 16.10) */}
+        <Consents look={desktop ? "light" : "lightMobile"} />
 
         {/*
           После отправки кнопка не выключается через disabled: иначе фокус

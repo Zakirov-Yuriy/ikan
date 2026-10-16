@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { ArrowIcon } from "@/components/ui/icons";
 import { requestStatus } from "@/content/site";
 import { sendRequest } from "@/lib/request";
+import { Consents } from "./Consents";
 import { useRequestSent } from "./RequestSent";
 import { useSiteSettings } from "./SiteSettings";
 
@@ -15,8 +15,6 @@ type Props = {
     namePlaceholder: string;
     phonePlaceholder: string;
     submit: string;
-    termsHref: string;
-    privacyHref: string;
   };
 };
 
@@ -94,31 +92,8 @@ export function CallbackForm({ form }: Props) {
         />
       </div>
 
-      <div className="mt-[9px] grid gap-[10px] text-[11px] leading-[17.05px] text-white/66">
-        <label className="flex gap-[10px]">
-          <input type="checkbox" name="terms" required className="check" />
-          <span className="pt-px">
-            Я ознакомился(-ась) с{" "}
-            {/* В макете линия под этой ссылкой на 7 px длиннее текста */}
-            <Link href={form.termsHref} className="consent-link pr-[7px]">
-              Условиями использования сайта
-            </Link>
-          </span>
-        </label>
-        <label className="flex gap-[10px]">
-          <input type="checkbox" name="privacy" required className="check" />
-          <span className="pt-px">
-            Я ознакомился(-ась) с{" "}
-            {/* В макете эта ссылка стоит на 2 px правее первой */}
-            <Link href={form.privacyHref} className="consent-link ml-[2px]">
-              Политикой конфиденциальности
-            </Link>{" "}
-            <span className="block max-w-[240px]">
-              и даю согласие на обработку персональных данных в соответствии с её условиями.
-            </span>
-          </span>
-        </label>
-      </div>
+      {/* Три галочки: соглашение и политика, персональные данные, реклама (Саша, 16.10) */}
+      <Consents look="dark" />
 
       <button
         type="submit"

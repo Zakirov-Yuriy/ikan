@@ -449,3 +449,79 @@
     transform: translateY(8px) scale(0.98);
   }
 }
+
+/*
+ * Текст юридических документов (/dokumenty/..., Саша 16.10). Макета нет,
+ * по стилю сайта: основной текст 14 px серый, заголовки разделов Manrope,
+ * ссылки голубые.
+ */
+@layer components {
+  .legal-text {
+    font-size: 14px;
+    line-height: 23px;
+    color: var(--color-muted);
+    overflow-wrap: break-word;
+  }
+
+  .legal-text > * + * {
+    margin-top: 12px;
+  }
+
+  .legal-text h2 {
+    margin-top: 34px;
+    font-family: var(--font-display);
+    font-size: 18px;
+    line-height: 25px;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .legal-text h2:first-child {
+    margin-top: 0;
+  }
+
+  .legal-text strong {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .legal-text ul {
+    padding-left: 20px;
+    list-style: disc;
+  }
+
+  .legal-text li + li {
+    margin-top: 6px;
+  }
+
+  .legal-text li > p + p {
+    margin-top: 6px;
+  }
+
+  .legal-text blockquote {
+    padding-left: 16px;
+    border-left: 2px solid #dfe5e5;
+  }
+
+  .legal-text a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .legal-text a:hover {
+    color: var(--color-navy);
+  }
+
+  @media (min-width: 1024px) {
+    .legal-text {
+      font-size: 15px;
+      line-height: 25px;
+    }
+
+    .legal-text h2 {
+      font-size: 20px;
+      line-height: 28px;
+    }
+  }
+}

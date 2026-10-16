@@ -1,4 +1,6 @@
 import Image from "next/image";
+import Link from "next/link";
+import { legalDocumentPath } from "@/content/documents";
 import { footer, site, type SiteSocials } from "@/content/site";
 import { getSettings } from "@/lib/api";
 import { AnchorLink } from "./AnchorLink";
@@ -75,6 +77,17 @@ export async function Footer({ formDesktopOnly = false }: { formDesktopOnly?: bo
           {footer.legal.map((line) => (
             <p key={line}>{line}</p>
           ))}
+          {/* Документы ссылками, открываются на сайте (16.10) */}
+          <p>
+            {footer.documents.map((item, i) => (
+              <span key={item.slug}>
+                {i > 0 && " · "}
+                <Link href={legalDocumentPath(item.slug)} className="transition-colors hover:text-white">
+                  {item.label}
+                </Link>
+              </span>
+            ))}
+          </p>
           <p>
             {footer.contacts.label} {footer.contacts.email}
             {/* Номер целиком на одной строке, не разрывается на телефоне */}
