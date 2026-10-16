@@ -17,19 +17,24 @@ const ALL = "all";
 
 /*
  * Список апартаментов по жилым комплексам. Наверху вкладки: «Все» и по одной
- * на каждый ЖК. При открытии страницы показаны все апартаменты, над каждой
+ * на каждый ЖК, в котором на этой странице есть хотя бы один апартамент.
+ * ЖК без апартаментов на сайте не видно (Анна, 16.10): вкладка появится сама,
+ * когда в админке в него добавят апартамент для этой страницы. При открытии страницы показаны все апартаменты, над каждой
  * группой подпись с названием ЖК. Выбор ЖК оставляет только его карточки.
  * Все карточки есть в разметке, скрипт только прячет лишние: без скриптов
  * видны все, поисковик видит все.
  */
 export function ComplexList({
-  complexes,
+  complexes: allComplexes,
   columns,
   cards,
   className = "pt-[28px] lg:pt-[40.4px]",
 }: Props) {
   const [active, setActive] = useState(ALL);
   const id = useId();
+  const complexes = allComplexes.filter((complex) =>
+    cards.some((card) => card.complex === complex.key),
+  );
   const tabs = [{ key: ALL, name: "Все" }, ...complexes];
 
   // Стрелки влево и вправо переходят между вкладками по кругу
@@ -80,11 +85,14 @@ export function ComplexList({
         role="tabpanel"
         className="mt-[20px] lg:mt-[28px]"
       >
+        {complexes.length === 0 && (
+          <p className="rounded-[14px] border border-[#ebefef] bg-white px-[20px] py-[28px] text-center text-[14px] leading-[22px] text-muted lg:rounded-[20px] lg:border-[#dfe5e5]">
+            Пока нет объектов.
+          </p>
+        )}
         {complexes.map((complex) => {
           const own = cards.filter((card) => card.complex === complex.key);
-          const shown =
-            active === ALL ? own.length > 0 : active === complex.key;
-          if (!shown) return null;
+          if (active !== ALL && active !== complex.key) return null;
           return (
             <section
               key={complex.key}
@@ -99,17 +107,11 @@ export function ComplexList({
                 </h2>
                 <span aria-hidden className="h-px flex-1 bg-[#dfe5e5]" />
               </div>
-              {own.length > 0 ? (
-                <CardList
-                  cards={own}
-                  columns={columns}
-                  eagerFirst={complex.key === complexes[0].key}
-                />
-              ) : (
-                <p className="rounded-[14px] border border-[#ebefef] bg-white px-[20px] py-[28px] text-center text-[14px] leading-[22px] text-muted lg:rounded-[20px] lg:border-[#dfe5e5]">
-                  В этом жилом комплексе пока нет объектов.
-                </p>
-              )}
+              <CardList
+                cards={own}
+                columns={columns}
+                eagerFirst={complex.key === complexes[0].key}
+              />
             </section>
           );
         })}
