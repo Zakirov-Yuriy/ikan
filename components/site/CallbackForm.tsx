@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { ArrowIcon } from "@/components/ui/icons";
 import { requestStatus } from "@/content/site";
+import { checkPhoneField, PHONE_MAX_LENGTH } from "@/lib/phone-check";
 import { phonePrefix } from "@/lib/phone-prefix";
 import { sendRequest } from "@/lib/request";
 import { Consents } from "./Consents";
@@ -37,6 +38,8 @@ export function CallbackForm({ form }: Props) {
     event.preventDefault();
     if (status.kind === "sending") return;
     const element = event.currentTarget;
+    /* Номер телефона с правильным числом цифр, иначе подсказка у поля (16.10) */
+    if (!(await checkPhoneField(element))) return;
     setStatus({ kind: "sending" });
     const error = await sendRequest(element, "callback");
     if (error) {
@@ -89,6 +92,7 @@ export function CallbackForm({ form }: Props) {
           inputMode="tel"
           placeholder={form.phonePlaceholder}
           aria-label="Телефон"
+          maxLength={PHONE_MAX_LENGTH}
           className={field}
           {...phonePrefix}
         />

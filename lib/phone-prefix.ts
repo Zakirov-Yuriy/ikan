@@ -1,4 +1,4 @@
-import type { ClipboardEvent, FocusEvent } from "react";
+import type { ClipboardEvent, FocusEvent, FormEvent } from "react";
 
 /*
  * Поле телефона в формах заявки (Анна, 16.10): при первом нажатии в пустое
@@ -10,13 +10,35 @@ import type { ClipboardEvent, FocusEvent } from "react";
 export const PHONE_PREFIX = "+7 ";
 
 export const phonePrefix = {
+  /* Пока человек правит номер, прежняя подсказка «проверьте номер» снимается */
+  onInput(event: FormEvent<HTMLInputElement>) {
+    const input = event.currentTarget;
+    input.setCustomValidity("");
+    /*
+     * Человек сам начал номер с «+» после подставленного «+7 » (по привычке
+     * набирает «+7 999...» или «+381...», так же делают программы
+     * автозаполнения): подставленный код убирается, остаётся набранное.
+     */
+    const rest = input.value.startsWith(PHONE_PREFIX)
+      ? input.value.slice(PHONE_PREFIX.length).trimStart()
+      : "";
+    if (rest.startsWith("+")) {
+      input.value = rest;
+      input.setSelectionRange(rest.length, rest.length);
+    }
+  },
   onFocus(event: FocusEvent<HTMLInputElement>) {
     const input = event.currentTarget;
     if (input.value !== "") return;
     input.value = PHONE_PREFIX;
     /* На телефоне курсор ставится после появления клавиатуры, поэтому в следующем кадре */
     requestAnimationFrame(() => {
-      if (document.activeElement === input) {
+      /* Только если человек ещё ничего не сделал: не набрал и не выделил текст */
+      const untouched =
+        input.value === PHONE_PREFIX &&
+        input.selectionStart === input.selectionEnd &&
+        input.selectionStart !== input.value.length;
+      if (document.activeElement === input && untouched) {
         input.setSelectionRange(input.value.length, input.value.length);
       }
     });

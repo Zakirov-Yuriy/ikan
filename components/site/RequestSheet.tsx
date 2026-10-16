@@ -3,6 +3,7 @@
 import { useId, useState, type FormEvent } from "react";
 import { ArrowIcon } from "@/components/ui/icons";
 import { requestStatus } from "@/content/site";
+import { checkPhoneField, PHONE_MAX_LENGTH } from "@/lib/phone-check";
 import { phonePrefix } from "@/lib/phone-prefix";
 import { sendRequest } from "@/lib/request";
 import { Consents } from "./Consents";
@@ -57,8 +58,11 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (status.kind === "sending" || status.kind === "sent") return;
+    const element = event.currentTarget;
+    /* Номер телефона с правильным числом цифр, иначе подсказка у поля (16.10) */
+    if (!(await checkPhoneField(element))) return;
     setStatus({ kind: "sending" });
-    const error = await sendRequest(event.currentTarget, "popup");
+    const error = await sendRequest(element, "popup");
     setStatus(error ? { kind: "failed", message: error } : { kind: "sent" });
   }
 
@@ -160,6 +164,7 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
           placeholder={
             desktop ? form.phone.placeholderDesktop : form.phone.placeholder
           }
+          maxLength={PHONE_MAX_LENGTH}
           className={`${field} ${look.input}`}
           {...phonePrefix}
         />
