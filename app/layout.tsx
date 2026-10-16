@@ -12,6 +12,16 @@ export const metadata: Metadata = {
   title: "ИКАН: недвижимость и инвестиции в Сербии",
   description:
     "Подбираем квартиры для собственного проживания, сдачи в аренду и инвестиций в строительство.",
+  /*
+   * Превью ссылки в Telegram, WhatsApp, ВКонтакте (16.10): картинка
+   * app/opengraph-image.png (логотип на тёмно-синем, 1200 на 630) на всех
+   * страницах. Заголовок и описание превью берутся у каждой страницы свои.
+   * Адрес картинки должен быть полным: SITE_URL, если задан, иначе Vercel
+   * подставляет адрес сайта сам.
+   */
+  metadataBase: process.env.SITE_URL ? new URL(process.env.SITE_URL) : undefined,
+  openGraph: { siteName: "ИКАН", locale: "ru_RU", type: "website" },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = {

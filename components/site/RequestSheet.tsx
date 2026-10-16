@@ -6,6 +6,7 @@ import { ArrowIcon } from "@/components/ui/icons";
 import { requestStatus } from "@/content/site";
 import { sendRequest } from "@/lib/request";
 import { Modal, useDesktop } from "./Modal";
+import { RequestSentContent } from "./RequestSent";
 import { useSiteSettings } from "./SiteSettings";
 
 export type RequestFormTexts = {
@@ -114,6 +115,11 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
       onClosed={onClosed}
       look={look}
     >
+      {/* После отправки вместо формы подтверждение «Заявка отправлена» (16.10) */}
+      {status.kind === "sent" ? (
+        <RequestSentContent titleId={titleId} onDone={onClose} />
+      ) : (
+      <>
       <p className="eyebrow text-accent">{form.eyebrow}</p>
       <h2
         id={titleId}
@@ -264,14 +270,6 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
           <ArrowIcon className={look.arrow} strokeWidth={look.arrowStroke} />
         </button>
 
-        {status.kind === "sent" && (
-          <p
-            role="status"
-            className="mt-3 pb-1 text-[13px] leading-[19px] text-accent"
-          >
-            {requestStatus.sent}
-          </p>
-        )}
         {status.kind === "failed" && (
           <p role="alert" className="mt-3 pb-1 text-[12px] leading-[18px] text-muted">
             {requestStatus.failed} {status.message} {requestStatus.retry}{" "}
@@ -286,6 +284,8 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
           </p>
         )}
       </form>
+      </>
+      )}
     </Modal>
   );
 }

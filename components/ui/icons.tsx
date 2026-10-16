@@ -85,6 +85,16 @@ export function MenuIcon(props: IconProps) {
   );
 }
 
+/* Галочка в круге: окно «Заявка отправлена» */
+export function CheckCircleIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" strokeWidth="1.5" {...base} {...props}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M7.5 12.5L10.5 15.5L16.5 9" />
+    </svg>
+  );
+}
+
 export function CloseIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 18 18" width="18" height="18" strokeWidth="1.5" {...base} {...props}>

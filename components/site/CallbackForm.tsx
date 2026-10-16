@@ -5,6 +5,7 @@ import { useState, type FormEvent } from "react";
 import { ArrowIcon } from "@/components/ui/icons";
 import { requestStatus } from "@/content/site";
 import { sendRequest } from "@/lib/request";
+import { useRequestSent } from "./RequestSent";
 import { useSiteSettings } from "./SiteSettings";
 
 type Props = {
@@ -29,6 +30,8 @@ export function CallbackForm({ form }: Props) {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   /* Телефон из админки для подсказки «позвоните нам» после ошибки */
   const { phones } = useSiteSettings();
+  /* После отправки открывается окно «Заявка отправлена» */
+  const sent = useRequestSent();
 
   /* Заявка уходит на сервер сайта (lib/request.ts), дальше в бэкенд и админку */
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -43,6 +46,7 @@ export function CallbackForm({ form }: Props) {
     }
     element.reset();
     setStatus({ kind: "sent" });
+    sent.show();
   }
 
   const field =
@@ -125,11 +129,7 @@ export function CallbackForm({ form }: Props) {
         <ArrowIcon className="size-4" />
       </button>
 
-      {status.kind === "sent" && (
-        <p role="status" className="mt-3 text-[12px] leading-[18px] text-sky">
-          {requestStatus.sent}
-        </p>
-      )}
+      {sent.dialog}
       {status.kind === "failed" && (
         <p role="alert" className="mt-3 text-[12px] leading-[18px] text-white/80">
           {requestStatus.failed} {status.message} {requestStatus.retry}{" "}
