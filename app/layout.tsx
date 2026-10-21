@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { CookieConsent } from "@/components/site/CookieConsent";
 import { MobileBar } from "@/components/site/MobileBar";
+import { PageViews } from "@/components/site/PageViews";
 import { RequestPopupProvider } from "@/components/site/RequestPopup";
 import { SiteSettingsProvider } from "@/components/site/SiteSettings";
 import { cookieConsent, requestForm } from "@/content/site";
@@ -69,6 +70,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           {/* Полоса «Позвонить», «Оставить заявку», Telegram внизу экрана на телефоне */}
           <MobileBar />
         </SiteSettingsProvider>
+        {/* Просмотры страниц для «Статистики» в админке, без cookie (21.10) */}
+        <PageViews />
         {/* Плашка «Мы используем cookie», пока человек не сделал выбор */}
         <CookieConsent texts={cookieConsent} />
       </body>
