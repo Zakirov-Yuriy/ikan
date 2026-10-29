@@ -303,10 +303,31 @@ const noPhoto = {
   height: 600,
 };
 
+/*
+ * Адрес фотографии для сайта. Бэкенд присылает полный адрес
+ * {APP_URL}/media/..., сайт оставляет от него только путь /media/...: такой
+ * адрес next/image запрашивает у самого сайта, а сайт берёт файл с бэкенда
+ * по BACKEND_URL (правило rewrites в next.config.ts). Поэтому на хостинге
+ * бэкенд может быть закрыт снаружи, а APP_URL в нём любым: посетитель видит
+ * фото только с адреса сайта. Адрес не с /media (другое хранилище картинок)
+ * остаётся как есть.
+ */
+export function mediaSrc(url: string): string {
+  try {
+    const parsed = new URL(url, BACKEND_URL);
+    if (parsed.pathname.startsWith("/media/")) {
+      return parsed.pathname + parsed.search;
+    }
+  } catch {
+    /* Адрес не разбирается: отдаём как есть */
+  }
+  return url;
+}
+
 function photo(item: ApiPhoto | null) {
   if (!item) return noPhoto;
   return {
-    src: item.url,
+    src: mediaSrc(item.url),
     alt: item.alt,
     width: item.width ?? noPhoto.width,
     height: item.height ?? noPhoto.height,
@@ -561,7 +582,7 @@ function toScenario(item: ApiHome["scenarios"][number]): ScenarioData {
     image: {
       src: image.src,
       alt: image.alt,
-      wide: item.photo_wide ? { src: item.photo_wide.url } : null,
+      wide: item.photo_wide ? { src: mediaSrc(item.photo_wide.url) } : null,
     },
   };
 }
@@ -635,7 +656,9 @@ function toHome(item: ApiHome): HomeData {
           item.consultation.button_label ?? consultationDefaults.button.label,
         href: consultationDefaults.button.href,
       },
-      image: item.consultation.photo?.url ?? consultationDefaults.image,
+      image: item.consultation.photo
+        ? mediaSrc(item.consultation.photo.url)
+        : consultationDefaults.image,
     },
   };
 }
