@@ -19,13 +19,13 @@ const homeNetworks = [
 /*
  * Фотографии объектов лежат на бэкенде (BACKEND_URL из .env.local, по
  * умолчанию http://localhost:8000) по адресам /media/... Сайт отдаёт их со
- * своего адреса: запрос /media/... к сайту уходит на бэкенд (rewrites ниже),
- * а lib/api.ts (mediaSrc) оставляет в адресах фото только путь. Поэтому
- * посетитель к бэкенду не обращается, и на хостинге бэкенд можно закрыть
- * снаружи. Список remotePatterns остаётся на случай полного адреса картинки
- * не с /media: next/image берёт картинки с чужого адреса только из него.
- * localhost и 127.0.0.1 на порту 8000 разрешены всегда, потому что бэкенд
- * локально отвечает по обоим.
+ * своего адреса: запрос /media/... к сайту обрабатывает app/media/[...path]/
+ * route.ts, он забирает файл у бэкенда, а lib/api.ts (mediaSrc) оставляет в
+ * адресах фото только путь. Поэтому посетитель к бэкенду не обращается, и на
+ * хостинге бэкенд можно закрыть снаружи. Список remotePatterns остаётся на
+ * случай полного адреса картинки не с /media: next/image берёт картинки с
+ * чужого адреса только из него. localhost и 127.0.0.1 на порту 8000
+ * разрешены всегда, потому что бэкенд локально отвечает по обоим.
  */
 const backend = new URL(process.env.BACKEND_URL ?? "http://localhost:8000");
 const backendHosts = Array.from(
@@ -64,19 +64,6 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: backendHosts,
     dangerouslyAllowLocalIP: backendIsLocal,
-  },
-  /*
-   * Фото с бэкенда под адресом сайта: /media/... сайт сам запрашивает у
-   * бэкенда по BACKEND_URL и отдаёт посетителю. Адрес бэкенда подставляется
-   * при сборке, поэтому после его смены сайт пересобрать.
-   */
-  async rewrites() {
-    return [
-      {
-        source: "/media/:path*",
-        destination: `${backend.origin}/media/:path*`,
-      },
-    ];
   },
   turbopack: {
     rules: {
