@@ -95,10 +95,19 @@ export type SiteSettings = {
   phone: SitePhone;
   phones: SitePhone[];
   socials: SiteSocials;
+  /* Яндекс Метрика из админки (02.11): id null, если счётчика нет */
+  metrika: SiteMetrika;
+};
+
+export type SiteMetrika = {
+  id: number | null;
+  webvisor: boolean;
 };
 
 export const site = {
   name: "ИКАН",
+  /* Без счётчика, пока в админке не задан номер */
+  metrika: { id: null, webvisor: false } satisfies SiteMetrika,
   /* Запасной телефон: такой же, как по умолчанию в бэкенде */
   phone: {
     label: "+7 (991) 255-29-00",
@@ -164,6 +173,8 @@ export const requestForm = {
 export const cookieConsent = {
   title: "Мы используем cookie",
   text: "Необходимые cookie обеспечивают работу сайта. Аналитические и маркетинговые cookie включаются только с вашего согласия.",
+  /* Ссылка на документ, где описаны cookie (Саша, 01.11): раздел «Cookie-файлы» в политике */
+  link: { label: "Подробнее в Политике конфиденциальности", document: "politika-konfidencialnosti" },
   acceptAll: "Принять все",
   settings: "Настроить",
   /* Окно настроек. Макета не было, сделано в духе окна заявки */
@@ -171,6 +182,7 @@ export const cookieConsent = {
     eyebrow: "Конфиденциальность",
     title: "Настройки cookie",
     lead: "Выберите, какие cookie сайт может использовать. Выбор можно изменить в любой момент.",
+    link: { label: "Как мы используем cookie: Политика конфиденциальности", document: "politika-konfidencialnosti" },
     categories: [
       {
         key: "necessary",

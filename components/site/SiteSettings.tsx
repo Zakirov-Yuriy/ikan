@@ -12,6 +12,7 @@ const SiteSettingsContext = createContext<SiteSettings>({
   phone: site.phone,
   phones: site.phones,
   socials: site.socials,
+  metrika: site.metrika,
 });
 
 export function SiteSettingsProvider({

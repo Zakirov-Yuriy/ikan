@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { legalDocumentPath } from "@/content/documents";
 import type { cookieConsent } from "@/content/site";
 import { Modal, useDesktop } from "./Modal";
 
@@ -67,7 +68,17 @@ export function CookieSettings({ texts, onClose, onSave }: Props) {
       >
         {texts.title}
       </h2>
-      <p className={`text-[13px] text-muted ${look.lead}`}>{texts.lead}</p>
+      <p className={`text-[13px] text-muted ${look.lead}`}>
+        {texts.lead}{" "}
+        <a
+          href={legalDocumentPath(texts.link.document)}
+          target="_blank"
+          rel="noopener"
+          className="consent-link-light"
+        >
+          {texts.link.label}
+        </a>
+      </p>
 
       <ul
         className={`divide-y divide-[#ebefef] border-y border-[#ebefef] ${look.list}`}

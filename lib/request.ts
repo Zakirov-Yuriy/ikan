@@ -2,6 +2,7 @@
  * Отправка заявки с формы сайта на свой адрес /api/request (дальше её
  * передаёт сервер сайта). Возвращает текст ошибки или null, если принято.
  */
+import { reachGoal } from "./metrika";
 import { isOnlyPrefix } from "./phone-prefix";
 
 export type RequestSource = "callback" | "popup";
@@ -35,7 +36,11 @@ export async function sendRequest(
       body: JSON.stringify(payload),
     });
     const result = (await response.json()) as { ok: boolean; message?: string };
-    if (response.ok && result.ok) return null;
+    if (response.ok && result.ok) {
+      /* Цель для Метрики: заявка отправлена, source: popup или callback (02.11) */
+      reachGoal("request", { source });
+      return null;
+    }
     return result.message ?? "Не удалось отправить заявку.";
   } catch {
     return "Нет связи. Проверьте интернет и попробуйте ещё раз.";

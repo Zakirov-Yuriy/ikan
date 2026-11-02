@@ -11,6 +11,7 @@ import {
   type ComponentProps,
   type ReactNode,
 } from "react";
+import { reachGoal } from "@/lib/metrika";
 import { RequestSheet, type RequestFormTexts } from "./RequestSheet";
 
 type RequestPopup = {
@@ -42,6 +43,8 @@ export function RequestPopupProvider({
     returnFocusTo.current =
       target ?? (active instanceof HTMLElement ? active : null);
     setState("open");
+    /* Цель для Метрики: окно заявки открыто (02.11) */
+    reachGoal("request_open");
   }, []);
 
   // Окно убрано со страницы: возвращаем фокус на кнопку, которая его открыла

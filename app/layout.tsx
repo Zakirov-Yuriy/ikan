@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { CookieConsent } from "@/components/site/CookieConsent";
+import { Metrika } from "@/components/site/Metrika";
 import { MobileBar } from "@/components/site/MobileBar";
 import { PageViews } from "@/components/site/PageViews";
 import { RequestPopupProvider } from "@/components/site/RequestPopup";
@@ -21,6 +22,11 @@ export const metadata: Metadata = {
    * подставляет адрес сайта сам.
    */
   metadataBase: process.env.SITE_URL ? new URL(process.env.SITE_URL) : undefined,
+  /*
+   * Канонический адрес каждой страницы: тот же путь на SITE_URL. Так
+   * www.ik-ikan.ru и ik-ikan.ru для поисковиков одна страница, а не две копии.
+   */
+  alternates: { canonical: "./" },
   openGraph: { siteName: "ИКАН", locale: "ru_RU", type: "website" },
   twitter: { card: "summary_large_image" },
 };
@@ -69,6 +75,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           </RequestPopupProvider>
           {/* Полоса «Позвонить», «Оставить заявку», Telegram внизу экрана на телефоне */}
           <MobileBar />
+          {/* Яндекс Метрика: номер счётчика из админки, только после согласия на аналитические cookie (02.11) */}
+          <Metrika />
         </SiteSettingsProvider>
         {/* Просмотры страниц для «Статистики» в админке, без cookie (21.10) */}
         <PageViews />

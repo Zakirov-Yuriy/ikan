@@ -256,6 +256,11 @@ export const getSettings = cache(async (): Promise<SiteSettings> => {
     /* Старый бэкенд без phones: один главный телефон */
     phones: item?.phones?.length ? item.phones : item ? [phone] : site.phones,
     socials: item?.socials ?? site.socials,
+    /* Старый бэкенд без metrika: счётчика нет */
+    metrika: {
+      id: typeof item?.metrika?.id === "number" ? item.metrika.id : null,
+      webvisor: item?.metrika?.webvisor === true,
+    },
   };
 });
 

@@ -6,6 +6,7 @@ import {
   subscribeCookieConsent,
   writeCookieConsent,
 } from "@/lib/cookie-consent";
+import { legalDocumentPath } from "@/content/documents";
 import type { cookieConsent as CookieTexts } from "@/content/site";
 import { CookieSettings, type CookieChoice } from "./CookieSettings";
 
@@ -72,7 +73,16 @@ export function CookieConsent({ texts }: Props) {
             {texts.title}
           </p>
           <p className="mt-[10px] text-[10px] leading-[16px] text-muted lg:mt-[9px] lg:max-w-[600px] lg:text-[11px] lg:leading-[17px]">
-            {texts.text}
+            {texts.text}{" "}
+            {/* Документ открывается в новой вкладке, чтобы плашка и выбор не пропали */}
+            <a
+              href={legalDocumentPath(texts.link.document)}
+              target="_blank"
+              rel="noopener"
+              className="consent-link-light whitespace-nowrap"
+            >
+              {texts.link.label}
+            </a>
           </p>
         </div>
         <div className="mt-[18px] flex flex-col lg:mt-[14.5px] lg:shrink-0 lg:flex-row lg:items-center lg:gap-[21px]">
