@@ -35,11 +35,11 @@ export function PageViews() {
       const sent =
         typeof navigator.sendBeacon === "function" &&
         navigator.sendBeacon(
-          "/api/view",
+          "/site-api/view",
           new Blob([body], { type: "application/json" }),
         );
       if (!sent) {
-        void fetch("/api/view", {
+        void fetch("/site-api/view", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body,

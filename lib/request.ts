@@ -1,5 +1,5 @@
 /*
- * Отправка заявки с формы сайта на свой адрес /api/request (дальше её
+ * Отправка заявки с формы сайта на свой адрес /site-api/request (дальше её
  * передаёт сервер сайта). Возвращает текст ошибки или null, если принято.
  */
 import { reachGoal } from "./metrika";
@@ -30,7 +30,7 @@ export async function sendRequest(
   };
 
   try {
-    const response = await fetch("/api/request", {
+    const response = await fetch("/site-api/request", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
