@@ -1,5 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { Lightbox } from "./Lightbox";
 
 type Photo = { src: string; alt: string };
 
@@ -7,6 +11,8 @@ type Props = {
   photos: Photo[];
   mobilePhoto: Photo;
   all: { label: string; href: string };
+  /* Все фотографии объекта без повторов: по ним листает просмотр */
+  allPhotos: Photo[];
   /*
    * Высота двух маленьких фотографий на компьютере. В макете ресторана они
    * 176 px, в макете апартамента 185 px.
@@ -17,10 +23,14 @@ type Props = {
 const allLink =
   "absolute flex h-[39px] items-center rounded-[8px] bg-white px-[13.5px] text-[12px] leading-[18px] font-semibold text-ink transition-colors hover:text-accent";
 
+const openLabel = "Открыть фото";
+
 /*
- * Фотографии объекта. Нажатие на любую фотографию открывает страницу всех
- * фотографий, как кнопка «Все N фото» (правка Саши 16.10): поверх каждой
- * лежит прозрачная ссылка, скрытая для клавиатуры, кнопка остаётся сверху.
+ * Фотографии объекта. Нажатие на любую фотографию открывает её в просмотре
+ * поверх страницы (Lightbox, Саша 05.11), с этого фото, листать можно все
+ * фотографии объекта. Кнопка «Все N фото» по-прежнему ведёт на страницу со
+ * всеми фотографиями. Поверх каждого фото лежит прозрачная кнопка, кнопка
+ * «Все N фото» остаётся сверху.
  *
  * На телефоне в макете одна фотография во всю ширину.
  * На компьютере две большие сверху в общей рамке и две маленькие снизу,
@@ -30,9 +40,17 @@ export function Gallery({
   photos,
   mobilePhoto,
   all,
+  allPhotos,
   smallHeight = 176,
 }: Props) {
   const [first, second, third, fourth] = photos;
+  /* Какое фото открыто в просмотре; null, когда просмотр закрыт */
+  const [opened, setOpened] = useState<number | null>(null);
+  const list = allPhotos.length > 0 ? allPhotos : photos;
+  /* Четыре места галереи заполняются по кругу, слот i показывает фото i % list.length */
+  const open = (slot: number) => setOpened(slot % list.length);
+  const overlay =
+    "absolute inset-0 cursor-zoom-in focus-visible:outline-2 focus-visible:outline-accent";
   const tall = smallHeight === 185;
   const small = `relative overflow-hidden rounded-[12px] bg-line ${
     tall ? "aspect-[336/185]" : "aspect-[336/176]"
@@ -55,11 +73,11 @@ export function Gallery({
           sizes="(min-width: 1024px) 1px, 100vw"
           className="object-cover object-left"
         />
-        <Link
-          href={all.href}
-          tabIndex={-1}
-          aria-hidden
-          className="absolute inset-0"
+        <button
+          type="button"
+          aria-label={`${openLabel} 1`}
+          onClick={() => open(0)}
+          className={overlay}
         />
         <Link
           href={all.href}
@@ -81,11 +99,11 @@ export function Gallery({
               sizes="(min-width: 1024px) 390px, 1px"
               className="object-cover object-left"
             />
-            <Link
-              href={all.href}
-              tabIndex={-1}
-              aria-hidden
-              className="absolute inset-0"
+            <button
+              type="button"
+              aria-label={`${openLabel} 1`}
+              onClick={() => open(0)}
+              className={overlay}
             />
           </div>
           <div className="relative">
@@ -96,11 +114,11 @@ export function Gallery({
               sizes="(min-width: 1024px) 283px, 1px"
               className="object-cover object-right"
             />
-            <Link
-              href={all.href}
-              tabIndex={-1}
-              aria-hidden
-              className="absolute inset-0"
+            <button
+              type="button"
+              aria-label={`${openLabel} 2`}
+              onClick={() => open(1)}
+              className={overlay}
             />
           </div>
         </div>
@@ -114,11 +132,11 @@ export function Gallery({
               sizes="(min-width: 1024px) 336px, 1px"
               className={smallPhoto}
             />
-            <Link
-              href={all.href}
-              tabIndex={-1}
-              aria-hidden
-              className="absolute inset-0"
+            <button
+              type="button"
+              aria-label={`${openLabel} 3`}
+              onClick={() => open(2)}
+              className={overlay}
             />
           </div>
           <div className={small}>
@@ -129,11 +147,11 @@ export function Gallery({
               sizes="(min-width: 1024px) 336px, 1px"
               className={smallPhoto}
             />
-            <Link
-              href={all.href}
-              tabIndex={-1}
-              aria-hidden
-              className="absolute inset-0"
+            <button
+              type="button"
+              aria-label={`${openLabel} 4`}
+              onClick={() => open(3)}
+              className={overlay}
             />
             <Link href={all.href} className={`${allLink} ${allSpot}`}>
               {all.label}
@@ -141,6 +159,14 @@ export function Gallery({
           </div>
         </div>
       </div>
+
+      {opened !== null && (
+        <Lightbox
+          photos={list}
+          index={opened}
+          onClose={() => setOpened(null)}
+        />
+      )}
     </div>
   );
 }

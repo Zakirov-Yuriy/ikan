@@ -36,7 +36,11 @@ export async function ApartmentPage({ apartment }: Props) {
           На телефоне карточка идёт под фотографией.
         */}
         <div className="shell grid pt-[14px] lg:grid-cols-[minmax(0,681fr)_minmax(0,320fr)] lg:gap-x-[23px] lg:pt-[20px]">
-          <Gallery {...apartment.gallery} smallHeight={185} />
+          <Gallery
+            {...apartment.gallery}
+            allPhotos={apartment.photos}
+            smallHeight={185}
+          />
           <SummaryCard
             summary={apartment.summary}
             requestHref={site.callbackHref}

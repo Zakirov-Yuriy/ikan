@@ -42,7 +42,7 @@ export default async function RestaurantPage() {
         На телефоне карточка идёт сразу под фотографией, без промежутка.
       */}
         <div className="shell grid pt-[14px] lg:grid-cols-[minmax(0,681fr)_minmax(0,320fr)] lg:gap-x-[23px] lg:pt-[28px]">
-          <Gallery {...restaurant.gallery} />
+          <Gallery {...restaurant.gallery} allPhotos={restaurant.photos} />
           <SummaryCard
             summary={restaurant.summary}
             requestHref={site.callbackHref}

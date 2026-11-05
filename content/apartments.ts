@@ -64,7 +64,7 @@ export const apartmentPage = {
     crumb: "Фото",
     title: "Фотографии",
     back: "Назад к апартаменту",
-    open: "Открыть в полном размере",
+    open: "Открыть фото",
   },
   priceLabel: "Стоимость",
   priceOnRequest: "По запросу",

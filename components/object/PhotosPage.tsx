@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Consultation } from "@/components/home/Consultation";
 import { ArrowIcon } from "@/components/ui/icons";
@@ -7,6 +6,7 @@ import { FloatingActions } from "@/components/site/FloatingActions";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { site } from "@/content/site";
+import { PhotoGrid } from "./PhotoGrid";
 
 type Photo = { src: string; alt: string };
 
@@ -29,8 +29,8 @@ type Props = {
  * по стилю проекта (Анна, 15.10: «делай по своему усмотрению, придерживаясь
  * стиля проекта»): путь по сайту и заголовок как у страницы апартамента,
  * сетка скруглённых карточек как у списков: одна колонка на телефоне,
- * две на планшете, три на компьютере. Нажатие открывает файл фотографии
- * в полном размере в новой вкладке.
+ * две на планшете, три на компьютере. Нажатие открывает фото в просмотре
+ * поверх страницы с листанием (PhotoGrid, Lightbox; Саша, 05.11).
  */
 export function PhotosPage({
   crumbs,
@@ -64,32 +64,7 @@ export function PhotosPage({
           </Link>
         </div>
 
-        <ul className="shell mt-[24px] grid gap-[10px] md:grid-cols-2 lg:mt-[32px] lg:grid-cols-3">
-          {photos.map((item, index) => (
-            <li key={index}>
-              <a
-                href={item.src}
-                target="_blank"
-                rel="noopener"
-                aria-label={`${openLabel}: ${item.alt || `фото ${index + 1}`}`}
-                className="group relative block aspect-[4/3] overflow-hidden rounded-[12px] bg-line"
-              >
-                <Image
-                  src={item.src}
-                  alt={item.alt}
-                  fill
-                  loading={index < 3 ? "eager" : "lazy"}
-                  sizes="(min-width: 1024px) 384px, (min-width: 768px) 50vw, 100vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                />
-                <span className="absolute right-[12px] bottom-[12px] flex h-[26px] items-center rounded-full bg-white/95 px-3 font-display text-[10px] leading-[14px] font-semibold text-navy">
-                  {String(index + 1).padStart(2, "0")} /{" "}
-                  {String(photos.length).padStart(2, "0")}
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
+        <PhotoGrid photos={photos} openLabel={openLabel} />
 
         <Consultation
           title={consultation.title}

@@ -32,6 +32,6 @@ export const restaurantPage = {
     crumb: "Фото",
     title: "Фотографии",
     back: "Назад к ресторану",
-    open: "Открыть в полном размере",
+    open: "Открыть фото",
   },
 };
