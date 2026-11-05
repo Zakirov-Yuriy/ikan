@@ -10,7 +10,27 @@ import { getSettings } from "@/lib/api";
 import { fontVariables } from "./fonts";
 import "./globals.css";
 
-export const metadata: Metadata = {
+/*
+ * Общие метаданные сайта. Это функция, а не константа, потому что коды
+ * подтверждения для Яндекс Вебмастера и Google Search Console берутся из
+ * «Настроек» админки (05.11): Саша вставляет код в админке, и на всех
+ * страницах появляется <meta name="yandex-verification" content="...">
+ * без пересборки сайта. getSettings запоминает ответ на время запроса,
+ * так что к бэкенду уходит один вызов на страницу вместе с RootLayout.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const { verification } = await getSettings();
+
+  return {
+    ...baseMetadata,
+    verification: {
+      yandex: verification.yandex ?? undefined,
+      google: verification.google ?? undefined,
+    },
+  };
+}
+
+const baseMetadata: Metadata = {
   title: "ИКАН: недвижимость и инвестиции в Сербии",
   description:
     "Подбираем квартиры для собственного проживания, сдачи в аренду и инвестиций в строительство.",

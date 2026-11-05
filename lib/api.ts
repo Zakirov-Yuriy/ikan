@@ -261,8 +261,18 @@ export const getSettings = cache(async (): Promise<SiteSettings> => {
       id: typeof item?.metrika?.id === "number" ? item.metrika.id : null,
       webvisor: item?.metrika?.webvisor === true,
     },
+    /* Старый бэкенд без verification: тегов подтверждения нет */
+    verification: {
+      yandex: verificationCode(item?.verification?.yandex),
+      google: verificationCode(item?.verification?.google),
+    },
   };
 });
+
+/* Код подтверждения как есть, если бэкенд прислал непустую строку, иначе null */
+function verificationCode(value: unknown): string | null {
+  return typeof value === "string" && value.trim() !== "" ? value.trim() : null;
+}
 
 /*
  * Главная страница целиком. Тексты загружаются в бэкенд командой

@@ -97,6 +97,8 @@ export type SiteSettings = {
   socials: SiteSocials;
   /* Яндекс Метрика из админки (02.11): id null, если счётчика нет */
   metrika: SiteMetrika;
+  /* Коды подтверждения сайта для Яндекс Вебмастера и Google Search Console (05.11) */
+  verification: SiteVerification;
 };
 
 export type SiteMetrika = {
@@ -104,10 +106,22 @@ export type SiteMetrika = {
   webvisor: boolean;
 };
 
+/*
+ * Коды из «Настроек» админки, попадают в head каждой страницы как
+ * <meta name="yandex-verification"> и <meta name="google-site-verification">.
+ * null, если код не задан: тега на странице нет.
+ */
+export type SiteVerification = {
+  yandex: string | null;
+  google: string | null;
+};
+
 export const site = {
   name: "ИКАН",
   /* Без счётчика, пока в админке не задан номер */
   metrika: { id: null, webvisor: false } satisfies SiteMetrika,
+  /* Без кодов подтверждения, пока их не вставили в админке */
+  verification: { yandex: null, google: null } satisfies SiteVerification,
   /* Запасной телефон: такой же, как по умолчанию в бэкенде */
   phone: {
     label: "+7 (991) 255-29-00",
