@@ -24,8 +24,9 @@ export function CookieSettings({ texts, onClose, onSave }: Props) {
   const titleId = useId();
   const desktop = useDesktop();
   const [state, setState] = useState<"open" | "closing">("open");
+  /* Аналитика включена по умолчанию (счётчик уже работает), маркетинговых cookie на сайте нет */
   const [choice, setChoice] = useState<CookieChoice>({
-    analytics: false,
+    analytics: true,
     marketing: false,
   });
 

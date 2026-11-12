@@ -7,6 +7,7 @@ import { RequestPopupProvider } from "@/components/site/RequestPopup";
 import { SiteSettingsProvider } from "@/components/site/SiteSettings";
 import { cookieConsent, requestForm } from "@/content/site";
 import { getSettings } from "@/lib/api";
+import { metrikaNoscript, metrikaSnippet } from "@/lib/metrika";
 import { fontVariables } from "./fonts";
 import "./globals.css";
 
@@ -86,8 +87,26 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: startAtTopOnReload }} />
+        {/*
+          Код Яндекс Метрики прямо в HTML каждой страницы (12.11): номер из
+          админки, запускается сразу, чтобы Яндекс видел счётчик на сайте и
+          Директ считал переходы и цели. Посетитель, выключивший аналитику в
+          плашке cookie, счётчика не получает (проверка внутри кода).
+        */}
+        {settings.metrika.id !== null && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: metrikaSnippet(settings.metrika.id, settings.metrika.webvisor),
+            }}
+          />
+        )}
       </head>
       <body className="flex min-h-full flex-col">
+        {settings.metrika.id !== null && (
+          <noscript
+            dangerouslySetInnerHTML={{ __html: metrikaNoscript(settings.metrika.id) }}
+          />
+        )}
         <SiteSettingsProvider value={settings}>
           {/* Окно «Оставить заявку» общее для всех страниц */}
           <RequestPopupProvider form={requestForm}>
@@ -95,7 +114,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           </RequestPopupProvider>
           {/* Полоса «Позвонить», «Оставить заявку», Telegram внизу экрана на телефоне */}
           <MobileBar />
-          {/* Яндекс Метрика: номер счётчика из админки, только после согласия на аналитические cookie (02.11) */}
+          {/* Яндекс Метрика: переходы между страницами, цели, выключение по выбору в плашке cookie */}
           <Metrika />
         </SiteSettingsProvider>
         {/* Просмотры страниц для «Статистики» в админке, без cookie (21.10) */}
