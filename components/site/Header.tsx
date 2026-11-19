@@ -12,7 +12,7 @@ import { Socials } from "./Socials";
  * Шапка. Телефоны из админки («Настройки»): на компьютере оба столбиком
  * (16.10), меню телефона звонит на главный. Слева от телефонов те же иконки,
  * что в подвале: MAX, Telegram, ВКонтакте, почта (Анна, 19.11); на телефоне
- * шапка без них, там они в подвале.
+ * они стоят слева от трёх полосок меню и остаются, когда меню открыто.
  */
 export async function Header() {
   const { phone, phones, socials } = await getSettings();
@@ -72,8 +72,11 @@ export async function Header() {
           </RequestLink>
         </div>
 
-        {/* Меню для телефона */}
-        <MobileMenu nav={mainNav} phone={phone} />
+        {/* Меню для телефона: иконки слева от трёх полосок, список разделов раскрывает MobileMenu */}
+        <div className="flex items-center gap-[6px] lg:hidden">
+          <Socials urls={socials} className="gap-[8px]" size={20} />
+          <MobileMenu nav={mainNav} phone={phone} />
+        </div>
       </div>
     </header>
   );
