@@ -6,13 +6,16 @@ import { getSettings } from "@/lib/api";
 import { AnchorLink } from "./AnchorLink";
 import { MobileMenu } from "./MobileMenu";
 import { RequestLink } from "./RequestPopup";
+import { Socials } from "./Socials";
 
 /*
  * Шапка. Телефоны из админки («Настройки»): на компьютере оба столбиком
- * (16.10), меню телефона звонит на главный.
+ * (16.10), меню телефона звонит на главный. Слева от телефонов те же иконки,
+ * что в подвале: MAX, Telegram, ВКонтакте, почта (Анна, 19.11); на телефоне
+ * шапка без них, там они в подвале.
  */
 export async function Header() {
-  const { phone, phones } = await getSettings();
+  const { phone, phones, socials } = await getSettings();
 
   return (
     <header className="relative z-40 border-b border-[#eceeef] bg-white">
@@ -49,6 +52,7 @@ export async function Header() {
         </nav>
 
         <div className="hidden shrink-0 items-center gap-[15px] lg:flex">
+          <Socials urls={socials} className="gap-[10px]" size={22} />
           <div className="flex items-center gap-[7px] text-[13px] leading-5">
             <PhoneIcon className="size-[15px] shrink-0 text-ink" />
             <div className="flex flex-col">

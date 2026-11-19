@@ -80,11 +80,15 @@ export const requestStatus = {
 /* Телефон как он написан на сайте и как ссылка «позвонить» */
 export type SitePhone = { label: string; href: string };
 
-/* Ссылки иконок подвала из админки, null: иконку не показывать */
+/*
+ * Ссылки иконок шапки и подвала из админки, null: иконку не показывать.
+ * email: адрес mailto: из почты для связи (19.11).
+ */
 export type SiteSocials = {
   max: string | null;
   telegram: string | null;
   vk: string | null;
+  email: string | null;
 };
 
 /*
@@ -95,6 +99,8 @@ export type SiteSettings = {
   phone: SitePhone;
   phones: SitePhone[];
   socials: SiteSocials;
+  /* Почта для связи из админки (19.11): иконка письма и адрес в подвале, null если не задана */
+  email: string | null;
   /* Яндекс Метрика из админки (02.11): id null, если счётчика нет */
   metrika: SiteMetrika;
   /* Коды подтверждения сайта для Яндекс Вебмастера и Google Search Console (05.11) */
@@ -136,7 +142,9 @@ export const site = {
     max: "https://max.ru/u/f9LHodD0cOKw4NzKJl7VwikboHE9YRgKRd8GrqCCE2A1VsGgQ56KcSluPHc",
     telegram: "https://t.me/ikan_serbia",
     vk: "https://vk.ru/probizvip",
+    email: null,
   } satisfies SiteSocials,
+  email: null,
   /*
    * Форма «Заказать обратный звонок» в подвале. К ней прокручивают почти все
    * кнопки заявки; у трёх кнопок с окном заявки это запасной адрес на
@@ -171,6 +179,8 @@ export const requestForm = {
     placeholder: "Ваш телефон",
     placeholderDesktop: "+7 000 000 00 00",
   },
+  /* Почта по желанию (Саша, 19.11) */
+  email: { label: "Почта (необязательно)", placeholder: "name@example.com" },
   interest: {
     label: "Что вас интересует",
     placeholder: "Жильё для себя, для сдачи или инвестиции",
@@ -244,6 +254,8 @@ export const footer = {
     { key: "max", label: "MAX", icon: "/images/social/max.svg" },
     { key: "telegram", label: "Telegram", icon: "/images/social/telegram.svg" },
     { key: "vk", label: "ВКонтакте", icon: "/images/social/vk.svg" },
+    /* Почта (19.11): иконка нарисована в том же стиле, по образцу от Анны (синий круг, белая @) */
+    { key: "email", label: "Почта", icon: "/images/social/email.svg" },
   ] as const,
   /* Пункты «Недвижимость» с 15.10 ведут туда же, куда меню в шапке (Анна, 15.10) */
   columns: [
@@ -279,6 +291,8 @@ export const footer = {
     title: "Заказать обратный звонок",
     namePlaceholder: "Ваше имя",
     phonePlaceholder: "+7 000 000 00 00",
+    /* Почта по желанию (Саша, 19.11) */
+    emailPlaceholder: "Почта (необязательно)",
     submit: "Отправить",
   },
   /* Нижние строки подвала, как в макете от 13.10; последняя строка с телефоном из админки */
@@ -298,5 +312,6 @@ export const footer = {
     { label: "Согласие на рекламу", slug: "soglasie-na-reklamu" },
     { label: "Публичная оферта", slug: "oferta" },
   ],
-  contacts: { label: "Контакты:", email: "email@ik-ikan.ru" },
+  /* Адрес почты берётся из админки (19.11), без него строка начинается с телефона */
+  contacts: { label: "Контакты:" },
 };

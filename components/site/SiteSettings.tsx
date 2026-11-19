@@ -12,6 +12,7 @@ const SiteSettingsContext = createContext<SiteSettings>({
   phone: site.phone,
   phones: site.phones,
   socials: site.socials,
+  email: site.email,
   metrika: site.metrika,
   verification: site.verification,
 });

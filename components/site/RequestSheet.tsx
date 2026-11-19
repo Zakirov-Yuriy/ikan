@@ -18,6 +18,8 @@ export type RequestFormTexts = {
   name: { label: string; placeholder: string };
   /* В макетах подсказка в поле телефона разная: на телефоне одна, на компьютере другая */
   phone: { label: string; placeholder: string; placeholderDesktop: string };
+  /* Почта по желанию (Саша, 19.11) */
+  email: { label: string; placeholder: string };
   interest: { label: string; placeholder: string };
   submit: string;
 };
@@ -48,6 +50,7 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
   const titleId = useId();
   const nameId = useId();
   const phoneId = useId();
+  const emailId = useId();
   const interestId = useId();
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const desktop = useDesktop();
@@ -167,6 +170,21 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
           maxLength={PHONE_MAX_LENGTH}
           className={`${field} ${look.input}`}
           {...phonePrefix}
+        />
+
+        <label htmlFor={emailId} className={`${label} ${look.labelGap}`}>
+          {form.email.label}
+        </label>
+        {/* Без required: браузер проверяет только вид адреса, если поле заполнено */}
+        <input
+          id={emailId}
+          type="email"
+          name="email"
+          autoComplete="email"
+          inputMode="email"
+          placeholder={form.email.placeholder}
+          maxLength={190}
+          className={`${field} ${look.input}`}
         />
 
         <label htmlFor={interestId} className={`${label} ${look.labelGap}`}>

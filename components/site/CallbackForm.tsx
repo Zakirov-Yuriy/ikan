@@ -16,6 +16,7 @@ type Props = {
     title: string;
     namePlaceholder: string;
     phonePlaceholder: string;
+    emailPlaceholder: string;
     submit: string;
   };
 };
@@ -95,6 +96,17 @@ export function CallbackForm({ form }: Props) {
           maxLength={PHONE_MAX_LENGTH}
           className={field}
           {...phonePrefix}
+        />
+        {/* Почта по желанию (Саша, 19.11): без required, браузер проверяет только вид адреса */}
+        <input
+          type="email"
+          name="email"
+          autoComplete="email"
+          inputMode="email"
+          placeholder={form.emailPlaceholder}
+          aria-label={form.emailPlaceholder}
+          maxLength={190}
+          className={field}
         />
       </div>
 

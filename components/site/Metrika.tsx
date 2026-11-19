@@ -121,6 +121,11 @@ export function Metrika() {
         reachGoal("call", { phone: href.slice(4) });
         return;
       }
+      /* Иконка почты и адрес в подвале (19.11) считаются той же целью, что соцсети */
+      if (href.startsWith("mailto:")) {
+        reachGoal("social", { host: "email" });
+        return;
+      }
       try {
         const host = new URL(link.href).hostname.replace(/^www\./, "");
         if (SOCIAL_HOSTS.includes(host)) reachGoal("social", { host });

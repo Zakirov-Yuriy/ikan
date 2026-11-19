@@ -1,19 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import { legalDocumentPath } from "@/content/documents";
-import { footer, site, type SiteSocials } from "@/content/site";
+import { footer, site } from "@/content/site";
 import { getSettings } from "@/lib/api";
 import { AnchorLink } from "./AnchorLink";
 import { CallbackForm } from "./CallbackForm";
+import { Socials } from "./Socials";
 
 /*
- * Подвал. Телефоны и ссылки иконок из админки («Настройки»).
+ * Подвал. Телефоны, ссылки иконок и почта из админки («Настройки»).
  * formDesktopOnly: форма «Заказать обратный звонок» только на компьютере.
  * Так на странице инвестиций: в её макете для телефона формы в подвале нет
  * (Анна, 15.10). Кнопки заявки там открывают окно заявки (RequestPopup).
  */
 export async function Footer({ formDesktopOnly = false }: { formDesktopOnly?: boolean }) {
-  const { phones, socials } = await getSettings();
+  const { phones, socials, email } = await getSettings();
 
   return (
     <footer className="bg-navy text-navy-text">
@@ -88,12 +89,18 @@ export async function Footer({ formDesktopOnly = false }: { formDesktopOnly?: bo
               </span>
             ))}
           </p>
+          {/* Почта из админки ссылкой (19.11); без неё строка начинается с телефона */}
           <p>
-            {footer.contacts.label} {footer.contacts.email}
+            {footer.contacts.label}{" "}
+            {email && (
+              <a href={`mailto:${email}`} className="transition-colors hover:text-white">
+                {email}
+              </a>
+            )}
             {/* Номер целиком на одной строке, не разрывается на телефоне */}
-            {phones.map((item) => (
+            {phones.map((item, i) => (
               <span key={item.href}>
-                {" · "}
+                {(email || i > 0) && " · "}
                 <span className="whitespace-nowrap">{item.label}</span>
               </span>
             ))}
@@ -101,34 +108,6 @@ export async function Footer({ formDesktopOnly = false }: { formDesktopOnly?: bo
         </div>
       </div>
     </footer>
-  );
-}
-
-/*
- * Ряд иконок соцсетей и мессенджеров. Файлы иконок взяты из макета без изменений.
- * Ссылки из админки, открываются в новой вкладке; иконка без ссылки не показывается.
- */
-function Socials({ urls, className = "" }: { urls: SiteSocials; className?: string }) {
-  const items = footer.socials.filter((item) => urls[item.key]);
-  if (items.length === 0) return null;
-  return (
-    <ul className={`flex ${className}`}>
-      {items.map((item) => {
-        return (
-          <li key={item.label}>
-            <a
-              href={urls[item.key] ?? undefined}
-              aria-label={item.label}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block transition-opacity hover:opacity-80"
-            >
-              <Image src={item.icon} alt="" width={24} height={24} unoptimized />
-            </a>
-          </li>
-        );
-      })}
-    </ul>
   );
 }
 

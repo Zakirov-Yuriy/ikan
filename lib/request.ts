@@ -18,6 +18,8 @@ export async function sendRequest(
     phone: isOnlyPrefix(String(data.get("phone") ?? ""))
       ? ""
       : String(data.get("phone") ?? ""),
+    /* Почта по желанию (19.11): пустая уходит пустой, бэкенд её не требует */
+    email: String(data.get("email") ?? "").trim(),
     interest: String(data.get("interest") ?? ""),
     source,
     page: window.location.pathname,

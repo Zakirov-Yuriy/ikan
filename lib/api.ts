@@ -251,11 +251,21 @@ export async function getRestaurant(): Promise<RestaurantData | null> {
 export const getSettings = cache(async (): Promise<SiteSettings> => {
   const item = await api<Partial<SiteSettings>>("/site");
   const phone = item?.phone ?? site.phone;
+  /* Почта для связи: непустая строка из админки или null (старый бэкенд без поля: null) */
+  const email =
+    typeof item?.email === "string" && item.email.trim() !== ""
+      ? item.email.trim()
+      : null;
   return {
     phone,
     /* Старый бэкенд без phones: один главный телефон */
     phones: item?.phones?.length ? item.phones : item ? [phone] : site.phones,
-    socials: item?.socials ?? site.socials,
+    socials: {
+      ...(item?.socials ?? site.socials),
+      /* Иконка почты ведёт на mailto: с адресом из админки (19.11) */
+      email: email ? `mailto:${email}` : null,
+    },
+    email,
     /* Старый бэкенд без metrika: счётчика нет */
     metrika: {
       id: typeof item?.metrika?.id === "number" ? item.metrika.id : null,
