@@ -15,6 +15,7 @@ const SiteSettingsContext = createContext<SiteSettings>({
   email: site.email,
   metrika: site.metrika,
   verification: site.verification,
+  popup: site.popup,
 });
 
 export function SiteSettingsProvider({

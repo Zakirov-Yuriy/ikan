@@ -5,7 +5,7 @@ import { ArrowIcon } from "@/components/ui/icons";
 import { requestStatus } from "@/content/site";
 import { checkPhoneField, PHONE_MAX_LENGTH } from "@/lib/phone-check";
 import { phonePrefix } from "@/lib/phone-prefix";
-import { sendRequest } from "@/lib/request";
+import { sendRequest, type RequestSource } from "@/lib/request";
 import { Consents } from "./Consents";
 import { Modal, useDesktop } from "./Modal";
 import { RequestSentContent } from "./RequestSent";
@@ -34,6 +34,8 @@ type Props = {
   /* open: окно показано, closing: окно закрывается */
   state: "open" | "closing";
   form: RequestFormTexts;
+  /* Откуда открыто: popup по кнопке, popup_auto само по таймеру (21.11) */
+  source?: RequestSource;
   /* Просьба закрыть: крестик, клавиша Escape, нажатие на тёмный фон */
   onClose: () => void;
   /* Окно закрылось, его можно убрать со страницы */
@@ -46,7 +48,7 @@ type Props = {
  * телефоне выезжает снизу: размеры, поля и порядок согласий взяты из своих
  * макетов.
  */
-export function RequestSheet({ state, form, onClose, onClosed }: Props) {
+export function RequestSheet({ state, form, source = "popup", onClose, onClosed }: Props) {
   const titleId = useId();
   const nameId = useId();
   const phoneId = useId();
@@ -65,7 +67,7 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
     /* Номер телефона с правильным числом цифр, иначе подсказка у поля (16.10) */
     if (!(await checkPhoneField(element))) return;
     setStatus({ kind: "sending" });
-    const error = await sendRequest(element, "popup");
+    const error = await sendRequest(element, source);
     setStatus(error ? { kind: "failed", message: error } : { kind: "sent" });
   }
 
@@ -89,19 +91,25 @@ export function RequestSheet({ state, form, onClose, onClosed }: Props) {
         arrowStroke: 1.07,
       }
     : {
+        /*
+         * На телефоне отступы ужаты (Саша, 21.11): с полем почты форма
+         * перестала помещаться на экран, и кнопку «Оставить заявку»
+         * приходилось искать прокруткой. Поле «Что вас интересует» теперь
+         * высотой с обычное поле, при наборе текст в нём прокручивается.
+         */
         wrap: "items-end",
         panel:
-          "sheet-panel max-h-[calc(100dvh-16px)] rounded-t-[20px] px-5 pt-[26.5px] pb-[calc(10px+env(safe-area-inset-bottom))] sm:max-w-[480px]",
+          "sheet-panel max-h-[calc(100dvh-16px)] rounded-t-[20px] px-5 pt-[16px] pb-[calc(10px+env(safe-area-inset-bottom))] sm:max-w-[480px]",
         close: "top-3 right-3 size-11",
-        title: "mt-[17px] text-[26px] leading-[28.6px]",
-        lead: "mt-4 max-w-[330px] leading-[21px]",
-        form: "mt-[21px]",
-        labelGap: "mt-[10.5px]",
+        title: "mt-[8px] text-[26px] leading-[28.6px]",
+        lead: "mt-[8px] max-w-[330px] leading-[21px]",
+        form: "mt-[12px]",
+        labelGap: "mt-[6px]",
         field:
-          "mt-[7.5px] rounded-[10px] border-[#ebefef] px-[12px] text-[16px] leading-6",
-        input: "h-[50px] pb-[2px]",
-        textarea: "h-[102px] py-[12px]",
-        submit: "mt-[16.5px] active:bg-ink",
+          "mt-[4px] rounded-[10px] border-[#ebefef] px-[12px] text-[16px] leading-6",
+        input: "h-[46px] pb-[2px]",
+        textarea: "h-[46px] py-[10px]",
+        submit: "mt-[12px] active:bg-ink",
         arrow: "size-[18px]",
         arrowStroke: 1.275,
       };

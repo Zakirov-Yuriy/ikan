@@ -99,13 +99,19 @@ export function ComplexList({
               aria-label={`ЖК ${complex.name}`}
               className="mt-[36px] first:mt-0 lg:mt-[48px]"
             >
-              {/* Подпись группы: название ЖК и линия до правого края */}
+              {/*
+                Подпись группы: название ЖК и линия до правого края. Название
+                переносится на вторую строку, а не раздвигает страницу (21.11):
+                из-за длинного «FONTANA- Dragana Vuksanovica 12» страница на
+                телефоне становилась шире экрана, и закреплённая полоса с
+                кнопками уезжала вправо и вниз.
+              */}
               <div className="mb-[16px] flex items-center gap-[14px] lg:mb-[22px] lg:gap-[18px]">
                 <p className="label-caps shrink-0 text-muted">Жилой комплекс</p>
-                <h2 className="shrink-0 font-display text-[20px] leading-[25px] font-medium tracking-[-0.035em] text-navy lg:text-[24px] lg:leading-[27px]">
+                <h2 className="min-w-0 font-display text-[20px] leading-[25px] font-medium tracking-[-0.035em] break-words text-navy lg:text-[24px] lg:leading-[27px]">
                   {complex.name}
                 </h2>
-                <span aria-hidden className="h-px flex-1 bg-[#dfe5e5]" />
+                <span aria-hidden className="h-px min-w-[24px] flex-1 bg-[#dfe5e5]" />
               </div>
               <CardList
                 cards={own}

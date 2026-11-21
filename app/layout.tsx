@@ -3,6 +3,7 @@ import { CookieConsent } from "@/components/site/CookieConsent";
 import { Metrika } from "@/components/site/Metrika";
 import { MobileBar } from "@/components/site/MobileBar";
 import { PageViews } from "@/components/site/PageViews";
+import { AutoRequestPopup } from "@/components/site/AutoRequestPopup";
 import { RequestPopupProvider } from "@/components/site/RequestPopup";
 import { SiteSettingsProvider } from "@/components/site/SiteSettings";
 import { cookieConsent, requestForm } from "@/content/site";
@@ -111,6 +112,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           {/* Окно «Оставить заявку» общее для всех страниц */}
           <RequestPopupProvider form={requestForm}>
             {children}
+            {/* Окно заявки само через заданное в админке время (21.11) */}
+            <AutoRequestPopup />
           </RequestPopupProvider>
           {/* Полоса «Позвонить», «Оставить заявку», Telegram внизу экрана на телефоне */}
           <MobileBar />

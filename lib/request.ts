@@ -5,7 +5,11 @@
 import { reachGoal } from "./metrika";
 import { isOnlyPrefix } from "./phone-prefix";
 
-export type RequestSource = "callback" | "popup";
+/* popup_auto: окно заявки, которое открылось само по таймеру из настроек (21.11) */
+export type RequestSource = "callback" | "popup" | "popup_auto";
+
+/* Отметка в браузере, что заявка уже отправлялась: автоматическое окно больше не показывается */
+export const REQUEST_SENT_KEY = "ikan-request-sent";
 
 export async function sendRequest(
   form: HTMLFormElement,
@@ -39,8 +43,13 @@ export async function sendRequest(
     });
     const result = (await response.json()) as { ok: boolean; message?: string };
     if (response.ok && result.ok) {
-      /* Цель для Метрики: заявка отправлена, source: popup или callback (02.11) */
+      /* Цель для Метрики: заявка отправлена, source: popup, popup_auto или callback (02.11) */
       reachGoal("request", { source });
+      try {
+        localStorage.setItem(REQUEST_SENT_KEY, "1");
+      } catch {
+        /* приватный режим: отметки нет, окно может показаться ещё раз */
+      }
       return null;
     }
     return result.message ?? "Не удалось отправить заявку.";

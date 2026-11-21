@@ -25,7 +25,8 @@ const looks = {
     text: "pt-px",
   },
   lightMobile: {
-    list: "mt-[11.5px] grid gap-[13px] text-[10px] leading-[15px] text-muted",
+    /* Отступы ужаты вместе с остальной формой на телефоне (21.11) */
+    list: "mt-[8px] grid gap-[8px] text-[10px] leading-[15px] text-muted",
     check: "check-light",
     link: "consent-link-light",
     text: "",

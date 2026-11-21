@@ -276,6 +276,14 @@ export const getSettings = cache(async (): Promise<SiteSettings> => {
       yandex: verificationCode(item?.verification?.yandex),
       google: verificationCode(item?.verification?.google),
     },
+    /* Автоматическое окно заявки (21.11); без поля от бэкенда как по умолчанию в админке */
+    popup: {
+      enabled: item?.popup?.enabled !== false,
+      delay:
+        typeof item?.popup?.delay === "number" && item.popup.delay >= 1 && item.popup.delay <= 600
+          ? Math.round(item.popup.delay)
+          : site.popup.delay,
+    },
   };
 });
 

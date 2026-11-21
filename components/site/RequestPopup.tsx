@@ -12,15 +12,20 @@ import {
   type ReactNode,
 } from "react";
 import { reachGoal } from "@/lib/metrika";
+import type { RequestSource } from "@/lib/request";
 import { RequestSheet, type RequestFormTexts } from "./RequestSheet";
 
 type RequestPopup = {
   /*
    * Открыть окно заявки. Когда окно закроется, фокус вернётся на указанный
-   * элемент, а если он не указан, туда, где был до открытия.
+   * элемент, а если он не указан, туда, где был до открытия. source:
+   * popup_auto, если окно открылось само по таймеру (AutoRequestPopup).
    */
-  open: (returnFocusTo?: HTMLElement | null) => void;
+  open: (returnFocusTo?: HTMLElement | null, source?: RequestSource) => void;
 };
+
+/* Отметка на визит (sessionStorage): окно заявки уже открывалось, само больше не откроется */
+export const POPUP_OPENED_KEY = "ikan-request-popup";
 
 const RequestPopupContext = createContext<RequestPopup | null>(null);
 
@@ -36,16 +41,26 @@ export function RequestPopupProvider({
   children: ReactNode;
 }) {
   const [state, setState] = useState<"closed" | "open" | "closing">("closed");
+  const [source, setSource] = useState<RequestSource>("popup");
   const returnFocusTo = useRef<HTMLElement | null>(null);
 
-  const open = useCallback((target?: HTMLElement | null) => {
-    const active = document.activeElement;
-    returnFocusTo.current =
-      target ?? (active instanceof HTMLElement ? active : null);
-    setState("open");
-    /* Цель для Метрики: окно заявки открыто (02.11) */
-    reachGoal("request_open");
-  }, []);
+  const open = useCallback(
+    (target?: HTMLElement | null, from: RequestSource = "popup") => {
+      const active = document.activeElement;
+      returnFocusTo.current =
+        target ?? (active instanceof HTMLElement ? active : null);
+      setSource(from);
+      setState("open");
+      try {
+        sessionStorage.setItem(POPUP_OPENED_KEY, "1");
+      } catch {
+        /* без sessionStorage отметки нет */
+      }
+      /* Цель для Метрики: окно заявки открыто (02.11), source popup или popup_auto */
+      reachGoal("request_open", { source: from });
+    },
+    [],
+  );
 
   // Окно убрано со страницы: возвращаем фокус на кнопку, которая его открыла
   const onClosed = useCallback(() => {
@@ -88,6 +103,7 @@ export function RequestPopupProvider({
         <RequestSheet
           state={state}
           form={form}
+          source={source}
           onClose={() => setState("closing")}
           onClosed={onClosed}
         />

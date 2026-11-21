@@ -105,6 +105,14 @@ export type SiteSettings = {
   metrika: SiteMetrika;
   /* Коды подтверждения сайта для Яндекс Вебмастера и Google Search Console (05.11) */
   verification: SiteVerification;
+  /* Автоматическое окно заявки из админки (21.11) */
+  popup: SitePopup;
+};
+
+/* Окно «Оставить заявку» открывается само через delay секунд после захода, если enabled */
+export type SitePopup = {
+  enabled: boolean;
+  delay: number;
 };
 
 export type SiteMetrika = {
@@ -128,6 +136,8 @@ export const site = {
   metrika: { id: null, webvisor: false } satisfies SiteMetrika,
   /* Без кодов подтверждения, пока их не вставили в админке */
   verification: { yandex: null, google: null } satisfies SiteVerification,
+  /* Как по умолчанию в админке: включено, через 10 секунд */
+  popup: { enabled: true, delay: 10 } satisfies SitePopup,
   /* Запасной телефон: такой же, как по умолчанию в бэкенде */
   phone: {
     label: "+7 (991) 255-29-00",
@@ -183,7 +193,8 @@ export const requestForm = {
   email: { label: "Почта", placeholder: "name@example.com" },
   interest: {
     label: "Что вас интересует",
-    placeholder: "Жильё для себя, для сдачи или инвестиции",
+    /* Короче, чтобы помещалось в одну строку в ужатом поле на телефоне (21.11) */
+    placeholder: "Жильё, аренда или инвестиции",
   },
   submit: "Оставить заявку",
 };
